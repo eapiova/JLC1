@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>S4dot2.System</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--cubical</a> <a id="23" class="Pragma">--safe</a> <a id="30" class="Symbol">#-}</a>
+
+<a id="35" class="Comment">-- Facade (Phase 3 of the token-algebra parameterization): the generic</a>
+<a id="106" class="Comment">-- sequent-calculus layer applied at the NAT-SDL instance, plus the</a>
+<a id="174" class="Comment">-- relocated Position-discreteness block (fromList / unsort-factor /</a>
+<a id="243" class="Comment">-- toList-inj / discretePosition) re-exported from</a>
+<a id="294" class="Comment">-- S4dot2.TokenAlgebra.DiscretePosition under today&#39;s exact symbols.</a>
+<a id="363" class="Comment">-- The export surface is unchanged; discretePosition is exported exactly</a>
+<a id="436" class="Comment">-- once (Generic&#39;s field copy is hidden — at natSDL it is definitionally</a>
+<a id="509" class="Comment">-- the relocated proof).</a>
+
+<a id="535" class="Keyword">module</a> <a id="542" href="S4dot2.System.html" class="Module">S4dot2.System</a> <a id="556" class="Keyword">where</a>
+
+<a id="563" class="Keyword">open</a> <a id="568" class="Keyword">import</a> <a id="575" href="S4dot2.TokenAlgebra.NatSDL.html" class="Module">S4dot2.TokenAlgebra.NatSDL</a> <a id="602" class="Keyword">using</a> <a id="608" class="Symbol">(</a><a id="609" href="S4dot2.TokenAlgebra.NatSDL.html#1295" class="Function">natSDL</a><a id="615" class="Symbol">)</a>
+
+<a id="618" class="Keyword">open</a> <a id="623" class="Keyword">import</a> <a id="630" href="S4dot2.Generic.System.html" class="Module">S4dot2.Generic.System</a> <a id="652" href="S4dot2.TokenAlgebra.NatSDL.html#1295" class="Function">natSDL</a> <a id="659" class="Keyword">public</a>
+  <a id="668" class="Keyword">hiding</a> <a id="675" class="Symbol">(</a><a id="676" href="S4dot2.Generic.System.html#10052" class="Field">discretePosition</a><a id="692" class="Symbol">)</a>
+
+<a id="695" class="Keyword">open</a> <a id="700" class="Keyword">import</a> <a id="707" href="S4dot2.TokenAlgebra.DiscretePosition.html" class="Module">S4dot2.TokenAlgebra.DiscretePosition</a> <a id="744" class="Keyword">public</a>
+</pre></body></html>

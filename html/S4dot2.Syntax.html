@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>S4dot2.Syntax</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--cubical</a> <a id="23" class="Pragma">--safe</a> <a id="30" class="Symbol">#-}</a>
+
+<a id="35" class="Comment">-- Facade (Phase 3 of the token-algebra parameterization): the generic</a>
+<a id="106" class="Comment">-- syntax layer applied at the NAT-SDL instance, plus the SDL-specific</a>
+<a id="177" class="Comment">-- position toolbox re-exported from SortedPosition under today&#39;s exact</a>
+<a id="249" class="Comment">-- symbols.  The export surface is unchanged: every name is exported</a>
+<a id="318" class="Comment">-- exactly once — where Generic and SortedPosition both provide a</a>
+<a id="384" class="Comment">-- position-layer name, the SortedPosition original wins (Generic&#39;s copy</a>
+<a id="457" class="Comment">-- is hidden; at natSDL the two are definitionally equal), so downstream</a>
+<a id="530" class="Comment">-- files that import S4dot2.Syntax and S4dot2.SortedPosition together</a>
+<a id="600" class="Comment">-- (e.g. CutElimination/ProofSubst.agda) keep resolving to one symbol.</a>
+
+<a id="672" class="Keyword">module</a> <a id="679" href="S4dot2.Syntax.html" class="Module">S4dot2.Syntax</a> <a id="693" class="Keyword">where</a>
+
+<a id="700" class="Keyword">open</a> <a id="705" class="Keyword">import</a> <a id="712" href="S4dot2.TokenAlgebra.NatSDL.html" class="Module">S4dot2.TokenAlgebra.NatSDL</a> <a id="739" class="Keyword">using</a> <a id="745" class="Symbol">(</a><a id="746" href="S4dot2.TokenAlgebra.NatSDL.html#1295" class="Function">natSDL</a><a id="752" class="Symbol">)</a>
+
+<a id="755" class="Comment">-- ListExt re-exported here directly (original symbols — going through</a>
+<a id="826" class="Comment">-- the applied Generic module would make them ambiguous downstream)</a>
+<a id="894" class="Keyword">open</a> <a id="899" class="Keyword">import</a> <a id="906" href="S4dot2.ListExt.html" class="Module">S4dot2.ListExt</a> <a id="921" class="Keyword">public</a> <a id="928" class="Keyword">hiding</a> <a id="935" class="Symbol">(</a><a id="936" href="S4dot2.ListExt.html#735" class="Function Operator">_⊑_</a><a id="939" class="Symbol">)</a>
+
+<a id="942" class="Comment">-- Generic syntax layer at the NAT-SDL instance:</a>
+<a id="991" class="Comment">-- Formula, PFormula, Sequent, Axiom, ⊢S4dot2, [_], _∘_, _≢_,</a>
+<a id="1053" class="Comment">-- IsSingleTokenExt, TokenFresh, _∈Init_/_∉Init_, discreteToken (the</a>
+<a id="1122" class="Comment">-- interface field), the ListExt re-export, and variables A B C.</a>
+<a id="1187" class="Keyword">open</a> <a id="1192" class="Keyword">import</a> <a id="1199" href="S4dot2.Generic.Syntax.html" class="Module">S4dot2.Generic.Syntax</a> <a id="1221" href="S4dot2.TokenAlgebra.NatSDL.html#1295" class="Function">natSDL</a> <a id="1228" class="Keyword">public</a>
+  <a id="1237" class="Keyword">hiding</a> <a id="1244" class="Symbol">(</a><a id="1245" href="S4dot2.TokenAlgebra.Interface.html#1517" class="Field">Token</a><a id="1250" class="Symbol">;</a> <a id="1252" href="S4dot2.Generic.Syntax.html#1830" class="Field">Position</a><a id="1260" class="Symbol">;</a> <a id="1262" href="S4dot2.Generic.Syntax.html#1860" class="Field">singleton-pos</a><a id="1275" class="Symbol">;</a> <a id="1277" href="S4dot2.Generic.Syntax.html#1894" class="Field Operator">merge</a><a id="1282" class="Symbol">;</a> <a id="1284" href="S4dot2.Generic.Syntax.html#1923" class="Field">insertToken</a><a id="1295" class="Symbol">;</a> <a id="1297" href="S4dot2.Generic.Syntax.html#1956" class="Field Operator">_∈Pos_</a><a id="1303" class="Symbol">;</a> <a id="1305" href="S4dot2.Generic.Syntax.html#2027" class="Function Operator">_∉Pos_</a><a id="1311" class="Symbol">;</a> <a id="1313" href="S4dot2.TokenAlgebra.Derived.html#1510" class="Function Operator">_⊑_</a><a id="1316" class="Symbol">)</a>
+
+<a id="1319" class="Comment">-- SDL-based positions from SortedPosition (today&#39;s symbols, verbatim)</a>
+<a id="1390" class="Keyword">open</a> <a id="1395" class="Keyword">import</a> <a id="1402" href="S4dot2.SortedPosition.html" class="Module">S4dot2.SortedPosition</a> <a id="1424" class="Keyword">public</a>
+  <a id="1433" class="Keyword">renaming</a> <a id="1442" class="Symbol">(</a><a id="1443" href="S4dot2.SortedPosition.html#2582" class="Function Operator">[_]</a> <a id="1447" class="Symbol">to</a> <a id="1450" class="Function">singleton-pos</a><a id="1463" class="Symbol">)</a>  <a id="1466" class="Comment">-- [_] creates singleton Position from Token</a>
+</pre></body></html>
