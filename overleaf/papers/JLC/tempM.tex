@@ -345,7 +345,7 @@ The notions of \emph{subformula} and \emph{degree} are defined in a (quite) usua
 \begin{definition}[Subformulae \agdalink{S4dot2.CutElimination.SubformulaProperty.html\#_isSubformulaOf_}]\label{def:subform}
     The set $Sub(\pf{A}{s})$ of subformulae of a p-formula $\pf{A}{s}$ is defined recursively:
 \begin{itemize}
-    \item $Sub(\pf{p}{s}) = \{\pf{p}{s}\}$ if $p$ is a propositional symbol or $\bot$.
+    \item $Sub(\pf{p}{s}) = \{\pf{p}{s}\}$ if $p$ is a propositional symbol.
     \item $Sub(\pf{\neg A}{s}) = \{\pf{\neg A}{s}\} \cup Sub(\pf{A}{s})$.
     \item $Sub(\pf{A \circ B}{s}) = \{\pf{A \circ B}{s}\} \cup Sub(\pf{A}{s}) \cup Sub(\pf{B}{s})$ for $\circ \in \{\wedge, \vee, \rightarrow\}$.
     \item $Sub(\pf{\Box A}{s}) = \{\pf{\Box A}{s}\} \cup \bigcup_{t \in \mathcal{P}} Sub(\pf{A}{s,t})$.
@@ -381,6 +381,14 @@ $\hilbertlogic{\logic}$ is the smallest set $X$ of formulae that      contains a
         $A\to(B \to A)$
         \item[P2] $(A\to (B\to C))\to ((A\to B)\to (A\to C))$
         \item[P3] $((\neg B\to \neg A)\to ((\neg  B\to A)\to B)) $
+        \item[$\wedge$E$_1$] $(A\wedge B)\to A$
+        \item[$\wedge$E$_2$] $(A\wedge B)\to B$
+        \item[$\wedge$I] $A\to(B\to(A\wedge B))$
+        \item[$\vee$I$_1$] $A\to(A\vee B)$
+        \item[$\vee$I$_2$] $B\to(A\vee B)$
+        \item[$\vee$E] $(A\to C)\to((B\to C)\to((A\vee B)\to C))$
+        \item[$\Diamond$def$_1$] $\Diamond A\to\neg\Box\neg A$
+        \item[$\Diamond$def$_2$] $\neg\Box\neg A\to\Diamond A$
         \item[K] $\Box(A\to B)\to(\Box A \to \Box B)$
         \item[D] $\Box A \to \Diamond A$
         \item[T] $\Box A \to A$
@@ -394,7 +402,12 @@ $\hilbertlogic{\logic}$ is the smallest set $X$ of formulae that      contains a
 \end{description}
 
 \end{definition}
-We write $\vdash_{\hilbertlogic{\logic}}  A$  for  $A\in \hilbertlogic{\logic}$. Notice that, in the presence of Axiom \textbf{P3}, the underlying propositional logic is \emph{classical}. The $\axname{D}$ axiom is needed because $\Diamond$ is taken as a primitive connective rather than defined as $\neg\Box\neg$; in the latter case it would be derivable.
+We write $\vdash_{\hilbertlogic{\logic}}  A$  for  $A\in \hilbertlogic{\logic}$. Notice that, in the presence of Axiom \textbf{P3}, the underlying propositional logic is \emph{classical}.
+
+%% NOTA REVISIONE (decisione pendente, R1-6a-quater): qui va deciso se aggiungere una nota
+%% di erratum che segnali la correzione rispetto alle presentazioni precedenti del gruppo,
+%% con rinvio al testimone S4dot2/Algebra/LegacyBasisRefuted.agda.
+All six connectives are \emph{primitive constructors of the syntax}: this is a decision about the representation, taken with the planned intuitionistic development in mind, and it should be kept apart from logical independence. Since $\wedge$, $\vee$ and $\Diamond$ are not abbreviations, the axiomatisation has to govern them explicitly. This is why the basis above contains the introduction and elimination schemas for conjunction and disjunction, and both directions of the duality relating $\Diamond$ and $\Box$. Dropping them would leave the basis too weak to be adequate: it would not even derive $(A\wedge A)\to A$, since none of \textbf{P1}--\textbf{P3}, $\axname{K}$, $\axname{D}$, $\axname{T}$, $\axname{4}$, $\axname{G/.2}$ mentions $\wedge$ at all. The schema $\axname{D}$ is retained for continuity with the standard presentations of the logic, but in the presence of $\Diamond$def$_1$, $\Diamond$def$_2$ and $\axname{T}$ it is redundant.
 
 
 \subsection{The Calculus \texorpdfstring{$\calculus$}{E\_S4.2} \texorpdfstring{\agdalink{S4dot2.System.html\#_⊢_}}{}}
@@ -473,6 +486,17 @@ We show the rules of $\eseq$. %and the corresponding $Agda$ implementation. See 
 \]
 
 \subsection*{Propositional Rules}
+\[
+\AxiomC{$\seq{\Gamma}{\pf{A}{s}, \Delta}$}
+\RightLabel{$\neg\vdash$}
+\UnaryInfC{$\seq{\Gamma, \pf{\neg A}{s}}{\Delta}$}
+\DisplayProof
+\qquad
+\AxiomC{$\seq{\Gamma, \pf{A}{s}}{\Delta}$}
+\RightLabel{$\vdash\neg$}
+\UnaryInfC{$\seq{\Gamma}{\pf{\neg A}{s}, \Delta}$}
+\DisplayProof
+\]
 \[
 \AxiomC{$\seq{\Gamma, \pf{A}{s}}{\Delta}$}
 \RightLabel{$\wedge_1 \vdash$}
@@ -559,7 +583,8 @@ We show here the \agda{} implementation of the modal fragment.
 
 
 \subsection{Weak Completeness}
-The system $\eseq$ proves, at any position, all the theorems of the Hilbert-style presentation of $\logic$ (see also~\cite{Martini2024:S42NaturalDeduction}). The derivations below are given at the empty position $\varnothing$; derivability at an arbitrary position $s$ then follows by weakening (rule $W\vdash$ or $\vdash W$) applied to the position structure.
+The system $\eseq$ proves, at any position, all the theorems of the Hilbert-style presentation of $\logic$ (see also~\cite{Martini2024:S42NaturalDeduction}). The derivations below are given at the empty position $\varnothing$. Several of them, namely the propositional schemas together with $\axname{D}$ and $\axname{T}$, are in fact established at an arbitrary position, and $\varnothing$ is only the instance used here. Transporting a derivation from $\varnothing$ to an arbitrary position $s$ is not a matter of weakening, since $W\vdash$ and $\vdash W$ add a p-formula to a context and leave positions untouched: the mechanism is the position lifting lemma, which raises every position occurring in a derivation and carries a freshness proviso on the eigenpositions.
+
 
 
 
@@ -575,11 +600,16 @@ The following is the key lemma to prove the main theorem:
         \item[P1]   $ \pf{A\to(B \to A)}{\varnothing}$;
         \item[P2]  $  \pf{(A\to (B\to C))\to ((A\to B)\to (A\to C))}{\varnothing}$;
         \item[P3]   $  \pf{((\neg B\to \neg A)\to ((\neg  B\to A)\to B))}{\varnothing} $;
-%       \item $A\land B^\varnothing \leftrightarrow \neg (A \to \neg B)$;
-%       \item $A\lor B \leftrightarrow \neg (\neg A \land \neg B)$;     
-%       \item  $
-%           \pf{\Diamond A \leftrightarrow \neg\Box\neg A}{\varnothing}$;
+        \item[$\wedge$E$_1$] $\pf{(A\wedge B)\to A}{\varnothing}$;
+        \item[$\wedge$E$_2$] $\pf{(A\wedge B)\to B}{\varnothing}$;
+        \item[$\wedge$I] $\pf{A\to(B\to(A\wedge B))}{\varnothing}$;
+        \item[$\vee$I$_1$] $\pf{A\to(A\vee B)}{\varnothing}$;
+        \item[$\vee$I$_2$] $\pf{B\to(A\vee B)}{\varnothing}$;
+        \item[$\vee$E] $\pf{(A\to C)\to((B\to C)\to((A\vee B)\to C))}{\varnothing}$;
+        \item[$\Diamond$def$_1$] $\pf{\Diamond A\to\neg\Box\neg A}{\varnothing}$;
+        \item[$\Diamond$def$_2$] $\pf{\neg\Box\neg A\to\Diamond A}{\varnothing}$;
         \item[K] $ \pf{\Box (A\to B)\to (\Box A \to \Box B)}{\varnothing}$;
+        \item[D] $ \pf{\Box A \to \Diamond A}{\varnothing}$;
         \item[T] $   \pf{ \Box A \to A}{\varnothing}$;
         \item[4] $  \pf{ \Box A \to \Box\Box A}{\varnothing}$;
         \item[G/.2]  $ \pf{\Diamond\Box A\to \Box\Diamond A}{\varnothing}$.
@@ -594,7 +624,7 @@ The following is the key lemma to prove the main theorem:
 
 \begin{proof}
 
-We show here that axioms $\axname{P1}, \axname{P2}, \axname{P3}, \axname{K}, \axname{T}, \axname{4}, \axname{G/.2}$ of $\logic$ are derivable at the empty position $\varnothing$.
+We show here that the axioms of $\logic$ are derivable at the empty position $\varnothing$. The derivations are given one by one in the formalisation, and the exhaustive match that consumes them is the completeness function itself, so no schema can be silently omitted. Two remarks are worth making. First, the propositional schemas, together with $\axname{D}$ and $\axname{T}$, are in fact derived at an \emph{arbitrary} position $s$, and the empty position is only the instance used here; the schemas $\axname{K}$, $\axname{4}$, $\axname{G/.2}$ and the two duality schemas are derived at $\varnothing$, which is what the statement above requires. Second, the derivation of $\axname{D}$ is the one place where the empty extension in the modal rules is used essentially: it is obtained from $\seq{\pf{A}{s}}{\pf{A}{s}}$ by $\Box\vdash$ and $\vdash\Diamond$, both with an empty extension, followed by $\vdash\!\to$.
 
 \commento{
 \ExecuteMetaData[Chapter2.tex]{axiom1}
@@ -716,9 +746,11 @@ We can state the Weak Completeness Theorem as an easy corollary of the previous 
 
 \begin{theorem}[Weak Completeness for $\eseq$ \agdalink{S4dot2.Equivalence.HilbertCompleteness.html\#completeness}]\label{th:weakcompleteness}
 
-For each position $s$, if $\vdash_{\hilbertlogic{\logic}} A$ then $\vdash_{\eseq} A^s$.
+If $\vdash_{\hilbertlogic{\logic}} A$ then $\vdash_{\eseq} \pf{A}{\varnothing}$.
 
 \end{theorem}
+
+The statement is given at the empty position because this is what the formalised function delivers. A derivation at an arbitrary position is not obtained by weakening, which leaves positions untouched, but by the position lifting lemma \agdalink{S4dot2.Equivalence.HilbertCompleteness.html\#lift-proof}, which raises every position occurring in a derivation and requires the eigenpositions of that derivation to be fresh for the position one lifts by. Several of the schemas above are in fact derived directly at an arbitrary position, as noted in the proof of the previous lemma; a uniform corollary at an arbitrary position would only need the freshness proviso to be discharged, and we have not formalised it because no result in this paper depends on it.
 
 
 %\section{Some proof-theoretical results}
@@ -1684,7 +1716,7 @@ The notions of \emph{subformula} and \emph{degree} are defined in a (quite) usua
 \begin{definition}
     The set $Sub(\pf{A}{s})$ of subformulae of a p-formula $\pf{A}{s}$ is defined recursively:
 \begin{itemize}
-    \item $Sub(\pf{p}{s}) = \{\pf{p}{s}\}$ if $p$ is a propositional symbol or $\bot$.
+    \item $Sub(\pf{p}{s}) = \{\pf{p}{s}\}$ if $p$ is a propositional symbol.
     \item $Sub(\pf{\neg A}{s}) = \{\pf{\neg A}{s}\} \cup Sub(\pf{A}{s})$.
     \item $Sub(\pf{A \circ B}{s}) = \{\pf{A \circ B}{s}\} \cup Sub(\pf{A}{s}) \cup Sub(\pf{B}{s})$ for $\circ \in \{\wedge, \vee, \rightarrow\}$.
     \item $Sub(\pf{\Box A}{s}) = \{\pf{\Box A}{s}\} \cup \bigcup_{t \in \mathcal{P}} Sub(\pf{A}{s,t})$.

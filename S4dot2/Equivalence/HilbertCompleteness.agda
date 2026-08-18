@@ -736,6 +736,112 @@ derive-P3 {A} {B} {s} = ⊢⇒ {Γ = []} {Δ = []} (⊢⇒ {Γ = [ ((¬ B) ⇒ (
       (⊢¬ {Γ = []} {A = B} {s = s} {Δ = [ B ^ s ]}
         (Ax {A = B} {s = s})))))
 
+derive-∧E₁ : ∀ {A B : Formula} {s : Position}
+            → [] ⊢ [ ((A and B) ⇒ A) ^ s ]
+derive-∧E₁ {A} {B} {s} =
+  ⊢⇒ {Γ = []} {A = A and B} {s = s} {B = A} {Δ = []}
+    (∧₁⊢ {Γ = []} {A = A} {s = s} {Δ = [ A ^ s ]} {B = B}
+      (Ax {A = A} {s = s}))
+
+derive-∧E₂ : ∀ {A B : Formula} {s : Position}
+            → [] ⊢ [ ((A and B) ⇒ B) ^ s ]
+derive-∧E₂ {A} {B} {s} =
+  ⊢⇒ {Γ = []} {A = A and B} {s = s} {B = B} {Δ = []}
+    (∧₂⊢ {Γ = []} {B = B} {s = s} {Δ = [ B ^ s ]} {A = A}
+      (Ax {A = B} {s = s}))
+
+derive-∧I : ∀ {A B : Formula} {s : Position}
+           → [] ⊢ [ (A ⇒ (B ⇒ (A and B))) ^ s ]
+derive-∧I {A} {B} {s} =
+  ⊢⇒ {Γ = []} {A = A} {s = s} {B = B ⇒ (A and B)} {Δ = []}
+    (⊢⇒ {Γ = [ A ^ s ]} {A = B} {s = s} {B = A and B} {Δ = []}
+      (⊢∧ {Γ₁ = [ A ^ s ]} {A = A} {s = s} {Δ₁ = []}
+           {Γ₂ = [ B ^ s ]} {B = B} {Δ₂ = []}
+        (Ax {A = A} {s = s})
+        (Ax {A = B} {s = s})))
+
+derive-∨I₁ : ∀ {A B : Formula} {s : Position}
+            → [] ⊢ [ (A ⇒ (A or B)) ^ s ]
+derive-∨I₁ {A} {B} {s} =
+  ⊢⇒ {Γ = []} {A = A} {s = s} {B = A or B} {Δ = []}
+    (⊢∨₁ {Γ = [ A ^ s ]} {A = A} {s = s} {Δ = []} {B = B}
+      (Ax {A = A} {s = s}))
+
+derive-∨I₂ : ∀ {A B : Formula} {s : Position}
+            → [] ⊢ [ (B ⇒ (A or B)) ^ s ]
+derive-∨I₂ {A} {B} {s} =
+  ⊢⇒ {Γ = []} {A = B} {s = s} {B = A or B} {Δ = []}
+    (⊢∨₂ {Γ = [ B ^ s ]} {B = B} {s = s} {Δ = []} {A = A}
+      (Ax {A = B} {s = s}))
+
+derive-∨E : ∀ {A B C : Formula} {s : Position}
+           → [] ⊢ [ ((A ⇒ C) ⇒ ((B ⇒ C) ⇒ ((A or B) ⇒ C))) ^ s ]
+derive-∨E {A} {B} {C} {s} =
+  ⊢⇒ {Γ = []} {A = A ⇒ C} {s = s}
+      {B = (B ⇒ C) ⇒ ((A or B) ⇒ C)} {Δ = []}
+    (⊢⇒ {Γ = [ (A ⇒ C) ^ s ]} {A = B ⇒ C} {s = s}
+        {B = (A or B) ⇒ C} {Δ = []}
+      (⊢⇒ {Γ = [ (A ⇒ C) ^ s ] ++ [ (B ⇒ C) ^ s ]}
+          {A = A or B} {s = s} {B = C} {Δ = []}
+        (⊢C {Γ = [ (A ⇒ C) ^ s ] ++ [ (B ⇒ C) ^ s ] ++ [ (A or B) ^ s ]}
+            {A = C} {s = s} {Δ = []}
+          (∨⊢ {Γ₁ = [ (A ⇒ C) ^ s ]} {A = A} {s = s} {Δ₁ = [ C ^ s ]}
+              {Γ₂ = [ (B ⇒ C) ^ s ]} {B = B} {Δ₂ = [ C ^ s ]}
+            (Exc⊢ {Γ₁ = []} {A = A} {s = s} {B = A ⇒ C} {t = s}
+                  {Γ₂ = []} {Δ = [ C ^ s ]}
+              (⇒⊢ {Γ₁ = []} {B = C} {s = s} {Δ₁ = [ C ^ s ]}
+                    {Γ₂ = [ A ^ s ]} {A = A} {Δ₂ = []}
+                (Ax {A = C} {s = s})
+                (Ax {A = A} {s = s})))
+            (Exc⊢ {Γ₁ = []} {A = B} {s = s} {B = B ⇒ C} {t = s}
+                  {Γ₂ = []} {Δ = [ C ^ s ]}
+              (⇒⊢ {Γ₁ = []} {B = C} {s = s} {Δ₁ = [ C ^ s ]}
+                    {Γ₂ = [ B ^ s ]} {A = B} {Δ₂ = []}
+                (Ax {A = C} {s = s})
+                (Ax {A = B} {s = s})))))))
+
+derive-♢def₁ : ∀ {A : Formula}
+             → [] ⊢ [ ((♢ A) ⇒ (¬ (□ (¬ A)))) ^ ∅ ]
+derive-♢def₁ {A} =
+  ⊢⇒ {Γ = []} {A = ♢ A} {s = ∅} {B = ¬ (□ (¬ A))} {Δ = []}
+    (⊢¬ {Γ = [ (♢ A) ^ ∅ ]} {A = □ (¬ A)} {s = ∅} {Δ = []}
+      (Exc⊢ {Γ₁ = []} {A = □ (¬ A)} {s = ∅} {B = ♢ A} {t = ∅}
+            {Γ₂ = []} {Δ = []}
+        (♢⊢ {x = 0} {s = ∅} {Γ = [ (□ (¬ A)) ^ ∅ ]} {Δ = []} {A = A}
+          (λ ())
+          (TokenFresh-singleton {x = 0} {A = □ (¬ A)} {s = ∅} (λ ()))
+          (TokenFresh-[] {x = 0})
+          (subst (λ pos → [ (□ (¬ A)) ^ ∅ ] ++ [ A ^ pos ] ⊢ [])
+                 (merge-singleton ∅ 0)
+            (Exc⊢ {Γ₁ = []} {A = A} {s = ∅ ∘ singleton-pos 0}
+                  {B = □ (¬ A)} {t = ∅} {Γ₂ = []} {Δ = []}
+              (□⊢ {Γ = [ A ^ (∅ ∘ singleton-pos 0) ]} {A = ¬ A} {s = ∅}
+                   {t = singleton-pos 0} {Δ = []}
+                (¬⊢ {Γ = [ A ^ (∅ ∘ singleton-pos 0) ]} {A = A}
+                     {s = ∅ ∘ singleton-pos 0} {Δ = []}
+                  (Ax {A = A} {s = ∅ ∘ singleton-pos 0}))))))))
+
+derive-♢def₂ : ∀ {A : Formula}
+             → [] ⊢ [ ((¬ (□ (¬ A))) ⇒ (♢ A)) ^ ∅ ]
+derive-♢def₂ {A} =
+  ⊢⇒ {Γ = []} {A = ¬ (□ (¬ A))} {s = ∅} {B = ♢ A} {Δ = []}
+    (¬⊢ {Γ = []} {A = □ (¬ A)} {s = ∅} {Δ = [ (♢ A) ^ ∅ ]}
+      (⊢□ {x = 0} {s = ∅} {Γ = []} {Δ = [ (♢ A) ^ ∅ ]} {A = ¬ A}
+        (λ ())
+        (TokenFresh-[] {x = 0})
+        (TokenFresh-singleton {x = 0} {A = ♢ A} {s = ∅} (λ ()))
+        (⊢Exc {Γ = []} {Δ₁ = []} {A = ♢ A} {s = ∅}
+              {B = ¬ A} {t = insertToken 0 ∅} {Δ₂ = []}
+          (⊢♢ {Γ = []} {A = A} {s = ∅} {t = singleton-pos 0}
+               {Δ = [ (¬ A) ^ insertToken 0 ∅ ]}
+            (subst (λ pos → [] ⊢ [ A ^ pos ] ++ [ (¬ A) ^ insertToken 0 ∅ ])
+                   (sym (merge-singleton ∅ 0))
+              (⊢Exc {Γ = []} {Δ₁ = []} {A = ¬ A} {s = insertToken 0 ∅}
+                    {B = A} {t = insertToken 0 ∅} {Δ₂ = []}
+                (⊢¬ {Γ = []} {A = A} {s = insertToken 0 ∅}
+                     {Δ = [ A ^ insertToken 0 ∅ ]}
+                  (Ax {A = A} {s = insertToken 0 ∅}))))))))
+
 
 -- Helper for Identity: A ⊢ A
 id-seq : ∀ {A s} → [ A ^ s ] ⊢ [ A ^ s ]
@@ -1040,6 +1146,14 @@ completeness : ∀ {A} → ⊢S4dot2 A → [] ⊢ [ A ^ ∅ ]
 completeness (ax (P1 {A} {B})) = derive-P1
 completeness (ax P2) = derive-P2
 completeness (ax P3) = derive-P3
+completeness (ax ∧E₁) = derive-∧E₁
+completeness (ax ∧E₂) = derive-∧E₂
+completeness (ax ∧I) = derive-∧I
+completeness (ax ∨I₁) = derive-∨I₁
+completeness (ax ∨I₂) = derive-∨I₂
+completeness (ax ∨E) = derive-∨E
+completeness (ax ♢def₁) = derive-♢def₁
+completeness (ax ♢def₂) = derive-♢def₂
 completeness (ax K) = derive-K
 completeness (ax D) = derive-D
 completeness (ax T) = derive-T
