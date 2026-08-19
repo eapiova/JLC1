@@ -1,6 +1,9 @@
 module PaperIndex where
 
+import PaperCode
 import S4dot2.SortedPosition
+import S4dot2.TokenAlgebra.Instances.TaggedToken
+import S4dot2.TokenAlgebra.Instances.TaggedTokenCutElim
 import S4dot2.Syntax
 import S4dot2.System
 import S4dot2.CutElimination.Base

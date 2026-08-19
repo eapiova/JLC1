@@ -20,11 +20,15 @@ open import S4dot2.Equivalence.FiniteModel
 open import S4dot2.Equivalence.FiniteSoundness using (finiteSoundness)
 open import S4dot2.Equivalence.HilbertCompleteness using (completeness)
 
-module Classical
-  (segerberg-FMP : ∀ A → ¬ (⊢S4dot2 A)
-    → Σ FiniteModel λ M → eval M (m M) A ≡ false)
-  (decidable-⊢S4dot2 : ∀ A → Dec (⊢S4dot2 A))
-  where
+record ClassicalInputs : Type₁ where
+  field
+    segerberg-FMP : ∀ A → ¬ (⊢S4dot2 A)
+      → Σ FiniteModel λ M → eval M (m M) A ≡ false
+    decidable-⊢S4dot2 : ∀ A → Dec (⊢S4dot2 A)
+
+module Classical (inputs : ClassicalInputs) where
+
+  open ClassicalInputs inputs
 
   -- =============================================================================
   -- Finite Model Property (Harrop 1958, Section 4)

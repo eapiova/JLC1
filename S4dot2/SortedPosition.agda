@@ -32,6 +32,10 @@ _>ℕ_ = _>_
 open import Cubical.Data.DescendingList.Strict ℕ _>ℕ_ public
   renaming (SDL to Position; [] to ∅; cons to pos-cons)
 
+-- Stable documentation anchor for the position carrier.
+PositionCarrier : Type₀
+PositionCarrier = Position
+
 -- Import properties module
 import Cubical.Data.DescendingList.Strict.Properties as SDLPropsModule
 module SDLProps = SDLPropsModule ℕ _>ℕ_
