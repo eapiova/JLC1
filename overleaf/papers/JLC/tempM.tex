@@ -139,7 +139,7 @@
   Margherita Zorzi\thanks{Department of Computer Science, University of Verona, Italy.
     Email: \texttt{margherita.zorzi@univr.it}.}
 }
-\date{2025}
+\date{2026}
 
 \begin{document}
 
@@ -147,7 +147,7 @@
 
 \begin{abstract}
     We propose an implementation in the \agda{}~proof assistant of a new deductive system for the modal logic $\logic$. $\logic$ extends $\axname{S4}$ with the axiom $\Diamond\Box\phi \rightarrow \Box\Diamond\phi$ and arises as the underlying logic in different fields, from mathematics to philosophy.
-    Despite its widespread applications, $\logic$ has been under-investigated (with respect to other modal systems) for several years. In this paper we focus on the implementation of the metatheory of $\mathsf{E}_{\logic}$, a sequent calculus for $\logic$ built on previous investigations, where formulae are equipped with a \emph{position}, i.e. a set of uninterpreted tokens used to manage modal information. The calculus is designed to enjoy strong proof-theoretic properties, such as a direct syntactic proof of cut elimination, which in turn yields consistency of the system and the subformula property. We implement in \cubical{} both the system and the proof of the Cut-Elimination Theorem. Moreover, we propose the implementation of a constructive version of a semantics for $\logic$ based on semilattices, and we prove a constructive soundness theorem for $\mathsf{E}_{\logic}$ establishing, relying on Segerberg's finite model property, the (almost) constructive equivalence between the Hilbert-style axiomatisation and the sequent calculus.
+    Despite its widespread applications, $\logic$ has been under-investigated (with respect to other modal systems) for several years. In this paper we focus on the implementation of the metatheory of $\mathsf{E}_{\logic}$, a sequent calculus for $\logic$ built on previous investigations, where formulae are equipped with a \emph{position}, i.e.\ a set of uninterpreted tokens used to manage modal information. The calculus is designed to enjoy strong proof-theoretic properties, such as a direct syntactic proof of cut elimination, which in turn yields consistency of the system and, together with a direct proof of the subformula property for cut-free derivations, the analyticity of the calculus. We implement in \cubical{} both the system and the proof of the Cut-Elimination Theorem. Moreover, we propose the implementation of a constructive version of a semantics for $\logic$ based on semilattices, and we prove a constructive soundness theorem for $\mathsf{E}_{\logic}$ establishing, relying on Segerberg's finite model property, the (almost) constructive equivalence between the Hilbert-style axiomatisation and the sequent calculus.
     This work represents, in perspective, the initial step toward the (still unknown) intuitionistic version of $\logic$ as well as its purely constructive metamathematics.
 \end{abstract}
 
@@ -168,7 +168,7 @@ proof assistants.
 
 \commento{
 \fbox{da qui alla prossima nota possiamo anche togliere, intanto lascio}
-Cut elimination is a central result in proof theory: it guarantees that every provable formula --- a theorem --- admits a proof that uses only subformulae of the theorem itself. In sequent calculi this means that the proof only uses subformulae of the end-sequent in the derivation tree. Beyond its intrinsic proof-theoretic interest, cut elimination entails as corollaries the (syntactic proof of) consistency of the system and the subformula property, which are essential for proof search and decidability investigations. Last but not least, Cut Elimination carries a strong computational meaning, elevating proofs as computational objects.
+Cut elimination is a central result in proof theory: it guarantees that every provable formula --- a theorem --- admits a proof that uses only subformulae of the theorem itself. In sequent calculi this means that the proof only uses subformulae of the end-sequent in the derivation tree. Beyond its intrinsic proof-theoretic interest, cut elimination entails as a corollary the (syntactic proof of) consistency of the system and, combined with the subformula property of cut-free derivations, the analyticity just recalled; both are essential for proof search and decidability investigations. Last but not least, Cut Elimination carries a strong computational meaning, elevating proofs as computational objects.
 
 While cut elimination for propositional and first-order classical logic is well established, the situation for modal logics-requires dedicated techniques, due to the interplay between modal operators and the structural management of contexts.
 On the one side, the transition to first-order to modal logic is quite natural if one exploit the analogy between modal operators and quantifiers; on the other hand, manage modal information is challenging (see the archetypical case of $\axname{S4}$) and many solutions have been introduced ad hoc for specific systems, by loosing modularity and sometimes also the elegant analogy modalities-quantifiers cited above.
@@ -179,7 +179,7 @@ The flourishing of  deductive systems and the interesting relationships among di
 }
 
 %\subsection{On the Logic $\logic$}
-$\logic$ is a normal modal system that extends $\axname{S4}$ with the Geach axiom $\Diamond\Box\phi \rightarrow \Box\Diamond\phi$ that, in terms of the Sahlqvist correspondence, forces the Church-Rosser property on the relation in the subtended Kripke models. $\logic$ enjoys a number of interesting and heterogeneous instances.
+$\logic$ is a normal modal system that extends $\axname{S4}$ with the Geach axiom $\Diamond\Box\phi \rightarrow \Box\Diamond\phi$ that, in terms of the Sahlqvist correspondence, forces the Church-Rosser property --- also called weak directedness, or confluence --- on the relation in the subtended Kripke models: $\logic$ is sound and complete with respect to the class of reflexive, transitive and directed frames~\cite{Segerberg1971:EssayClassicalModal}, and we refer the reader to~\cite{Chalki2018:S42Tour} for a guided tour of the logic and of its frame conditions. $\logic$ enjoys a number of interesting and heterogeneous instances.
 
 One of the important ones is in the formalisation of temporal reasoning. As investigated by Goldblatt~\cite{Goldblatt1980:Diodorean}, if one interprets modal necessity $\Box$ in the Diodorean sense as ``it is true now and will always be the case that,'' and possibility $\Diamond$ as ``it is true now or will be true at some future time,'' then within the framework of $n$-dimensional Minkowski spacetime (for $n \geq 2$), the mathematical setting of special relativity, the set of valid modal sentences is precisely the logic S4.2. %The temporal ordering in this context, where an event $y$ is in the future of $x$ if a signal can travel from $x$ to $y$ at or below the speed of light, is reflexive and transitive (validating axioms T and 4). Crucially, this ordering is also directed: any two events share a common future event. This directedness property of the causal future is what validates the Geach axiom G, thereby establishing S4.2 as the logic of this relativistic temporal interpretation.
 
@@ -194,7 +194,7 @@ In this present paper we do the first step in the direction sketched above by fo
 The leading idea of this modal  proof-theory style is to decorate formulae with modal information, called \emph{position}, adding a spatial extension to the proof system.
 As shown in~\cite{Martini2023:CutElimination}, by interpreting positions as \emph{lists} of uninterpreted tokens (then forcing a notion of positionality and multiplicity), one can characterise different systems by ``tuning'' some constraints on modal rules in a rule system shared by all the logics in the framework. According to~\cite{Martini2024:S42NaturalDeduction}, lists for positions are too structured to capture the intermediate system $\logic$, and the correct choice is to move to a notion of \emph{set-positions}, where positions are simply sets of tokens.
 
-The sequent calculus $\eseq$ for $\logic$ we present, study and implement, enjoys some strong structural properties. Our main result is the Cut-Elimination Theorem, fully formalised in the \agda{} proof assistant, from which the consistency of the system and the Subformula Property follow as corollaries, by purely syntactic arguments. We also present the implementation of a direct proof of the Subformula Property.% Moreover, $\eseq$ is complete w.r.t. the Hilbert-style axiomatisation of $\logic$ and it is also s
+The sequent calculus $\eseq$ for $\logic$ we present, study and implement, enjoys some strong structural properties. Our main result is the Cut-Elimination Theorem, fully formalised in the \agda{} proof assistant, from which the consistency of the system follows as a corollary, by a purely syntactic argument. We also present the implementation of a direct proof of the Subformula Property for cut-free derivations; the two results compose into the analyticity of $\eseq$, since it is cut elimination that guarantees that every provable sequent admits a cut-free, hence analytic, derivation.% Moreover, $\eseq$ is complete w.r.t. the Hilbert-style axiomatisation of $\logic$ and it is also s
 
 %Before proceeding, it is appropriate to make a remark. The transition from natural deduction to the sequent calculus (and conversely) is by no means automatic. There are well-known and significant examples in which a logic (or a family of logics) admits a satisfactory formulation in one framework, while the other remains problematic. This is the case, for instance, with Linear Logic, for which no fully satisfactory system of natural deduction has been developed. In the case of $\logic$, the transition is natural; however, it is by no means technically trivial.
 
@@ -287,7 +287,7 @@ This choice is also forward-looking: in the planned intuitionistic version of $\
 Our main syntactic objects are the \emph{position-formulae}, i.e.\ modal formulae labelled by positions.
 
 
-\begin{definition}[Formulae \agdalink{S4dot2.Syntax.html\#Formula}]
+\begin{definition}[Formulae \agdalink{S4dot2.Generic.Syntax.html\#Formula}]
     The set $\mform$  of \textit{modal formulae}
     of ${\mathcal L}$ is the least set that contains the propositional
     symbols and is closed under application of the propositional
@@ -295,7 +295,7 @@ Our main syntactic objects are the \emph{position-formulae}, i.e.\ modal formula
 A formula is atomic if it is a propositional symbol. Negation $\neg$ is taken as a primitive connective.
 \end{definition}
 
-\begin{definition}[Position Formulae \agdalink{S4dot2.Syntax.html\#PFormula}]
+\begin{definition}[Position Formulae \agdalink{S4dot2.Generic.Syntax.html\#PFormula}]
 A \textit{position-formula} (briefly \textit{p-formula}) is an expression of the form $\pf{A}{s}$, where
         $A$ is a modal formula and $s \in \mathcal{P}$. $\pform$ is the set of position-formulae.
 \end{definition}
@@ -310,7 +310,41 @@ The use of \emph{sets} of tokens for positions is a key feature of $\calculus$, 
 
 A token is defined in the proof assistant as a natural number (an element in the set $\mathbb{N}$). This provides a countably infinite supply of names without requiring a fixed bound parameter. Decidable equality on $\mathbb{N}$ (\textsf{discreteℕ} from the \textsf{agda/cubical} library~\cite{VMA2021:CubicalAgda}) enables implementing ``freshness'' constraints in the modal rules, which require introducing a token not previously used in a given context: a fresh token is obtained by taking one more than the maximum token occurring in the current context.
 
+A nameless representation is a plausible alternative, although we did not implement a de Bruijn or locally nameless prototype. If the modal eigenrules were reformulated as scoped binders, de Bruijn indices could internalise $\alpha$-equivalence for eigentokens and reduce explicit fresh-name generation. They would not, however, eliminate all bookkeeping: the eigencondition would reappear as well-scoping and lifting obligations, while combining independently constructed derivations in the Mix procedure would require systematic reindexing. Moreover, tokens occur as elements of commutative, idempotent finite-set positions, and the formalisation substitutes a token with an entire position; index shifts would therefore have to act coherently on these sets. We retained named natural-number tokens because they closely mirror the paper calculus, provide decidable equality and deterministic fresh generation, and interact directly with the semilattice interpretation. The cost is explicit freshness, renaming, and preservation lemmas, especially in the modal Mix cases. This is a pragmatic design choice; without a nameless implementation, we make no empirical claim about relative proof size or efficiency.
+
 A position is implemented as a \emph{sorted descending list} (SDL) of tokens, a data structure from the \textsf{agda/cubical} library that provides a canonical representation of finite sets. The SDL representation guarantees no duplicates and a fixed ordering, yielding decidable equality and membership. Set operations, union (\textsf{merge}), membership ($\in$), subset ($\subseteq$), are all decidable.
+
+The proof-theoretic core is parameterised by a \textsf{TokenAlgebra} interface\agdalink{S4dot2.TokenAlgebra.Interface.html\#TokenAlgebra}. This interface exposes decidable token and position carriers, finite-set operations and their extensional laws, a finite enumeration of positions, and a measured fresh-token operation; it does not expose an ordering of tokens or an SDL canonical-form constructor. Syntax, inference rules, proof substitution, Mix, and cut elimination are all parameterised by this interface.
+
+\begin{verbatim}
+record TokenAlgebra : Type1 where
+  field
+    Token Pos       : Type0
+    discreteToken   : Discrete Token
+    discretePos     : Discrete Pos
+
+    eps             : Pos
+    sing            : Token -> Pos
+    _cup_           : Pos -> Pos -> Pos
+    insert remove   : Token -> Pos -> Pos
+    _in_            : Token -> Pos -> Type0
+    _in?_           : forall x s -> Dec (x in s)
+
+    -- algebraic, membership, and removal laws omitted
+    posExt           : ...
+    toList           : Pos -> List Token
+    tokNat           : Token -> Nat
+    freshAbove       : Nat -> Token
+    freshAbove-bound : forall n -> n < tokNat (freshAbove n)
+\end{verbatim}
+
+\noindent
+(The display renders the Unicode identifiers of the source in ASCII; the interface itself is
+linked above.)
+
+The public development instantiates it with natural-number tokens and sorted descending lists. As a non-trivial parametricity check, the repository also instantiates the full generic Mix and cut-elimination modules with tagged tokens $\mathbb{N}\times\mathsf{Bool}$\agdalink{S4dot2.TokenAlgebra.Instances.TaggedToken.html\#taggedToken}, ordered through the injective measure $(n,b)\mapsto 2n+\mathsf{bit}(b)$. This second instance still represents positions by SDLs: it establishes independence from the concrete token carrier, not yet from the position data structure itself. A normalised trie could in principle provide another implementation of the same interface, but we have neither implemented nor benchmarked such an alternative.
+
+This abstraction boundary currently covers syntax and the proof-theoretic cut-elimination development. The semantic, Hilbert-equivalence, and completeness developments still use the concrete SDL-based public modules.
 
 \bigskip 
 
@@ -334,13 +368,13 @@ s \quad\mbox{otherwise.}
 
 Position sequents naturally expand the usual notion of sequents as tuples of finite sequences of p-formulae:
 
-\begin{definition}[\agdalink{S4dot2.Syntax.html\#Sequent}]\label{def:extseq}
+\begin{definition}[\agdalink{S4dot2.Generic.Syntax.html\#Sequent}]\label{def:extseq}
 A \emph{position sequent} (e-sequent) is an expression $\seq{\Gamma}{\Delta}$, where $\Gamma$ and $\Delta$ are finite sequences of p-formulae.
 \end{definition}
 
 %\ExecuteMetaData[Chapter2.tex]{eseq}
 
-The notions of \emph{subformula} and \emph{degree} are defined in a (quite) usual way. Observe that, as the set of first-order (Gentzen) subformulae of $\forall x A(x)$ contains all the term-instances of $A(x)$, here the set of (position, modal) subformulae of $\pf{\Box A}{\alpha}$ contains all the extensions of the position $\alpha$ in $\pf{A}{\alpha}$.
+The notions of \emph{subformula} and \emph{degree} \agdalink{S4dot2.Generic.CutElimination.Defs.html\#degree} are defined in a (quite) usual way. Observe that, as the set of first-order (Gentzen) subformulae of $\forall x A(x)$ contains all the term-instances of $A(x)$, here the set of (position, modal) subformulae of $\pf{\Box A}{\alpha}$ contains all the extensions of the position $\alpha$ in $\pf{A}{\alpha}$.
 
 \begin{definition}[Subformulae \agdalink{S4dot2.CutElimination.SubformulaProperty.html\#_isSubformulaOf_}]\label{def:subform}
     The set $Sub(\pf{A}{s})$ of subformulae of a p-formula $\pf{A}{s}$ is defined recursively:
@@ -372,7 +406,7 @@ We briefly recall the axiomatic (``Hilbert-style'') presentation of the logic \t
 
 
 
-\begin{definition}[Hilbert-Style Axiomatisation $\hilbertlogic{\logic}$ \agdalink{S4dot2.Syntax.html\#Axiom}]\label{def:hilbert}
+\begin{definition}[Hilbert-Style Axiomatisation $\hilbertlogic{\logic}$ \agdalink{S4dot2.Generic.Syntax.html\#Axiom}]\label{def:hilbert}
 
 $\hilbertlogic{\logic}$ is the smallest set $X$ of formulae that      contains all instances of the following schemas:
 
@@ -410,7 +444,7 @@ We write $\vdash_{\hilbertlogic{\logic}}  A$  for  $A\in \hilbertlogic{\logic}$.
 All six connectives are \emph{primitive constructors of the syntax}: this is a decision about the representation, taken with the planned intuitionistic development in mind, and it should be kept apart from logical independence. Since $\wedge$, $\vee$ and $\Diamond$ are not abbreviations, the axiomatisation has to govern them explicitly. This is why the basis above contains the introduction and elimination schemas for conjunction and disjunction, and both directions of the duality relating $\Diamond$ and $\Box$. Dropping them would leave the basis too weak to be adequate: it would not even derive $(A\wedge A)\to A$, since none of \textbf{P1}--\textbf{P3}, $\axname{K}$, $\axname{D}$, $\axname{T}$, $\axname{4}$, $\axname{G/.2}$ mentions $\wedge$ at all. The schema $\axname{D}$ is retained for continuity with the standard presentations of the logic, but in the presence of $\Diamond$def$_1$, $\Diamond$def$_2$ and $\axname{T}$ it is redundant.
 
 
-\subsection{The Calculus \texorpdfstring{$\calculus$}{E\_S4.2} \texorpdfstring{\agdalink{S4dot2.System.html\#_⊢_}}{}}
+\subsection{The Calculus \texorpdfstring{$\calculus$}{E\_S4.2} \texorpdfstring{\agdalink{S4dot2.Generic.System.html\#_⊢_}}{}}
 
 In this section we present the Sequent Calculus $\calculus$. 
 Observe that, as usual in sequent calculi presentations,  sequences of formulae ($\Gamma$, $\Delta$), or positions ($s$, $t$) \emph{may be empty}, except when explicitly forbidden.
@@ -574,16 +608,16 @@ We show the rules of $\eseq$. %and the corresponding $Agda$ implementation. See 
 with the constraints:  $x \notin s$ and $x$ fresh for $\Gamma, \Delta$ for $\vdash \Box$  and $\Diamond \vdash$.
 
 
-We show here the \agda{} implementation of the modal fragment.
+We show here the \agda{} implementation of the modal fragment\agdalink{S4dot2.Generic.System.html\#_⊢_}, because it is the place where the side conditions of the two eigenrules become explicit: what the displayed rules state as a proviso on $x$ appears in the formalisation as three premises of the constructor, one for the principal position and one for each context.
 
-\ExecuteMetaData[Chapter2.tex]{modalRules}
+\ExecuteMetaData[SystemCode.tex]{modalRules}
 
 
 %\section{On weak completeness and Semantics}\label{sec:completeness}
 
 
 \subsection{Weak Completeness}
-The system $\eseq$ proves, at any position, all the theorems of the Hilbert-style presentation of $\logic$ (see also~\cite{Martini2024:S42NaturalDeduction}). The derivations below are given at the empty position $\varnothing$. Several of them, namely the propositional schemas together with $\axname{D}$ and $\axname{T}$, are in fact established at an arbitrary position, and $\varnothing$ is only the instance used here. Transporting a derivation from $\varnothing$ to an arbitrary position $s$ is not a matter of weakening, since $W\vdash$ and $\vdash W$ add a p-formula to a context and leave positions untouched: the mechanism is the position lifting lemma, which raises every position occurring in a derivation and carries a freshness proviso on the eigenpositions.
+The system $\eseq$ proves, at the empty position, all the theorems of the Hilbert-style presentation of $\logic$ (see also~\cite{Martini2024:S42NaturalDeduction}). The derivations below are given at the empty position $\varnothing$. Several of them, namely the propositional schemas together with $\axname{D}$ and $\axname{T}$, are in fact established at an arbitrary position, and $\varnothing$ is only the instance used here. Transporting a derivation from $\varnothing$ to an arbitrary position $s$ is not a matter of weakening, since $W\vdash$ and $\vdash W$ add a p-formula to a context and leave positions untouched: the mechanism is the position lifting lemma, which raises every position occurring in a derivation and carries a freshness proviso on the eigenpositions.
 
 
 
@@ -595,7 +629,7 @@ The following is the key lemma to prove the main theorem:
 
 \begin{lemma}[\agdalink{S4dot2.Equivalence.HilbertCompleteness.html\#derive-P1}]
 \begin{description}
-\item The following axioms are derivable in $\calculus$
+\item The following axiom schemas are derivable in $\calculus$
     \begin{itemize}
         \item[P1]   $ \pf{A\to(B \to A)}{\varnothing}$;
         \item[P2]  $  \pf{(A\to (B\to C))\to ((A\to B)\to (A\to C))}{\varnothing}$;
@@ -624,7 +658,7 @@ The following is the key lemma to prove the main theorem:
 
 \begin{proof}
 
-We show here that the axioms of $\logic$ are derivable at the empty position $\varnothing$. The derivations are given one by one in the formalisation, and the exhaustive match that consumes them is the completeness function itself, so no schema can be silently omitted. Two remarks are worth making. First, the propositional schemas, together with $\axname{D}$ and $\axname{T}$, are in fact derived at an \emph{arbitrary} position $s$, and the empty position is only the instance used here; the schemas $\axname{K}$, $\axname{4}$, $\axname{G/.2}$ and the two duality schemas are derived at $\varnothing$, which is what the statement above requires. Second, the derivation of $\axname{D}$ is the one place where the empty extension in the modal rules is used essentially: it is obtained from $\seq{\pf{A}{s}}{\pf{A}{s}}$ by $\Box\vdash$ and $\vdash\Diamond$, both with an empty extension, followed by $\vdash\!\to$.
+We show here that the axiom schemas of $\logic$ are derivable at the empty position $\varnothing$. The derivations are given one by one in the formalisation, and the exhaustive match that consumes them is the completeness function itself, so no schema can be silently omitted. Two remarks are worth making. First, the propositional schemas, together with $\axname{D}$ and $\axname{T}$, are in fact derived at an \emph{arbitrary} position $s$, and the empty position is only the instance used here; the schemas $\axname{K}$, $\axname{4}$, $\axname{G/.2}$ and the two duality schemas are derived at $\varnothing$, which is what the statement above requires. Second, the derivation of $\axname{D}$ is the one place where the empty extension in the modal rules is used essentially: it is obtained from $\seq{\pf{A}{s}}{\pf{A}{s}}$ by $\Box\vdash$ and $\vdash\Diamond$, both with an empty extension, followed by $\vdash\!\to$.
 
 \commento{
 \ExecuteMetaData[Chapter2.tex]{axiom1}
@@ -721,6 +755,7 @@ For the characteristic axiom, we also show here the \agda{}~code:
 \noindent
 The proof term mirrors the pen-and-paper derivation.
 A private module \texttt{G}, parametrised by the formula $A$, pre-computes the positions used in the proof: $\alpha = \varnothing$, $\beta = \{0\}$, $\gamma = \{1\}$, $\delta = \{0,1\}$.
+The two eigen-tokens of the pen-and-paper derivation are instantiated to concrete numerals: $x = 0$ is the eigen-token of $\Diamond\vdash$ and $y = 1$ is the eigen-token of $\vdash\Box$, so that $\beta$ is the position $\{x\}$, $\gamma$ is $\{y\}$ and $\delta$ is $\{x,y\}$.
 The blue identifiers are helper lemmas that discharge the side conditions of the modal rules:
 \texttt{fresh-$\alpha$-0} and \texttt{fresh-$\alpha$-1} witness that tokens $0$ and $1$ do not occur in the empty position~$\alpha$;
 \texttt{TokenFresh-[]} witnesses freshness with respect to an empty context;
@@ -763,7 +798,7 @@ We start with a central auxiliary lemma. In position-based sequent calculi token
 %\subsection{Substitution Lemmata}\label{ssec:subst-lemmata}
 
 \commento{
-\begin{lemma}[Token Renaming \agdalink{S4dot2.CutElimination.ProofSubst.html\#renameEigenpos-♢⊢-premise-gen}]\label{lem:token-renaming}
+\begin{lemma}[Token Renaming \agdalink{S4dot2.Generic.CutElimination.ProofSubst.html\#renameEigenpos-♢⊢-premise-gen}]\label{lem:token-renaming}
 Let $\Pi$ be a proof of an e-sequent $\seq{\Gamma}{\Delta}$. Let $x$ be a token, and let $y$ be a token such that $y$ does not occur in any position in $\Pi$ (if $x$ occurs in $\Pi$, this implies $y \neq x$).
 Let $\Pi[x \mapsto y]$ denote the proof structure obtained by replacing every occurrence of the token $x$ with the token $y$ within every position $s'$ in $\Pi$. That is, for any position $s'$, $s'[x \mapsto y]$ is defined as $(s' \setminus \{x\}) \cup \{y\}$ if $x \in s'$, and $s'[x \mapsto y] = s'$ if $x \notin s'$.
 Similarly, $\Gamma[x \mapsto y]$ and $\Delta[x \mapsto y]$ denote the application of this substitution to all positions in $\Gamma$ and $\Delta$, respectively.
@@ -840,12 +875,12 @@ The following lemma shows that replacing a token $x$ with a position $t$
 provided that certain freshness conditions hold.
 
 
-\begin{lemma}[Token-Position Substitution Lemma \agdalink{S4dot2.CutElimination.ProofSubst.html\#substTokenToPosProof}]\label{lem:pos-subst-validity}
+\begin{lemma}[Token-Position Substitution Lemma \agdalink{S4dot2.Generic.CutElimination.ProofSubst.html\#substTokenToPosProof}]\label{lem:pos-subst-validity}
 Let $x$ be a token and $t$ be a position.
 Let $\Pi$ be a proof of an e-sequent $\seq{\Gamma}{\Delta}$ such that:
 \begin{itemize}
-    \item Each eigen-token $y$ in $\Pi$ (introduced by $\vdash \Box$ or $\Diamond \vdash$) is distinct from $x$ (\texttt{EigenposCond} in the formalisation).
-    \item No eigen-token $y$ in $\Pi$ appears in the position $t$ (\texttt{NoEigenposInt} in the formalisation).
+    \item Each eigen-token $y$ in $\Pi$ (introduced by $\vdash \Box$ or $\Diamond \vdash$) is distinct from $x$ (\texttt{EigenposCond} \agdalink{S4dot2.Generic.CutElimination.ProofSubst.html\#EigenposCond} in the formalisation).
+    \item No eigen-token $y$ in $\Pi$ appears in the position $t$ (\texttt{NoEigenposInt} \agdalink{S4dot2.Generic.CutElimination.ProofSubst.html\#NoEigenposInt} in the formalisation).
 \end{itemize}
 Let $\Pi[x/t]$ denote the proof structure obtained by replacing every occurrence of the token $x$ with the set of tokens $t$ within every position found in any p-formula in $\Pi$.
 
@@ -877,20 +912,20 @@ In all cases, $R$ applied to the transformed premise(s) (valid by IH) yields the
 \end{proof}
 
 \begin{remark}
-Token renaming $[x \mapsto y]$, where a single token $x$ is replaced by another token $y$, is a special case of the above lemma with $t = \{y\}$. In the Agda formalisation, both operations are handled by the single function \texttt{substTokenToPosProof}.
+Token renaming $[x \mapsto y]$, where a single token $x$ is replaced by another token $y$, is a special case of the above lemma with $t = \{y\}$. In the Agda formalisation, both operations are handled by the single function \texttt{substTokenToPosProof} \agdalink{S4dot2.Generic.CutElimination.ProofSubst.html\#substTokenToPosProof}.
 \end{remark}
 
 %\subsection{Degree, Rank, and Notation}\label{ssec:degree-rank}
 
 We move now to the main result of the paper, which is also the core of the implementation in the \agda\ proof assistant we are proposing.
 
-The Cut Elimination Theorem is one of the fundamental results in proof theory, showing that every proof using the Cut Rule can be transformed into an equivalent cut-free proof. This property is crucial for achieving a computational interpretation of the system and yields as corollaries both the Subformula Property Theorem and a purely syntactic proof of consistency for $\calculus$. We adapt the standard techniques for the classical predicate calculus to position-sequents, following~\cite{Martini2023:CutElimination}.
+The Cut Elimination Theorem is one of the fundamental results in proof theory, showing that every proof using the Cut Rule can be transformed into an equivalent cut-free proof. This property is crucial for achieving a computational interpretation of the system; it yields a purely syntactic proof of consistency for $\calculus$ and, combined with the Subformula Property of cut-free proofs, the analyticity of the calculus. We adapt the standard techniques for the classical predicate calculus to position-sequents, following~\cite{Martini2023:CutElimination}.
 
 The proof proceeds by induction on the rank $\delta[\Pi]$, with structural induction on $\Pi$ for each fixed rank, and by cases on the last applied rule $r$.
 
 We start with some usual definitions such as the degree  of a formula and the rank of a proof.
 
-\begin{definition}[Degree of a modal p-formula \agdalink{S4dot2.CutElimination.Base.html\#degree}]\label{def:degree}
+\begin{definition}[Degree of a modal p-formula \agdalink{S4dot2.Generic.CutElimination.Defs.html\#degree}]\label{def:degree}
 The degree $dg(A)$ of a modal formula $A$ is defined as:
 \begin{itemize}
     \item $dg(p) = 0$ if $p$ is atomic.
@@ -900,9 +935,8 @@ The degree $dg(A)$ of a modal formula $A$ is defined as:
 \end{definition}
 The degree of a p-formula $\pf{A}{s}$ is $dg(\pf{A}{s}) = dg(A)$.
 
-\begin{definition}[Rank and height of a proof \agdalink{S4dot2.CutElimination.Base.html\#δ}]\label{def:rank}
-\begin{itemize}
-    \item The rank $\delta[\Pi]$ of a proof $\Pi$ is defined as:
+\begin{definition}[Rank of a proof \agdalink{S4dot2.Generic.CutElimination.Defs.html\#δ}]\label{def:rank}
+The rank $\delta[\Pi]$ of a proof $\Pi$ is defined as:
 \[
 \delta[\Pi] =
 \begin{cases}
@@ -910,8 +944,10 @@ The degree of a p-formula $\pf{A}{s}$ is $dg(\pf{A}{s}) = dg(A)$.
     \sup \{ dg(\pf{A}{s}) + 1 \mid \pf{A}{s} \text{ is a cut formula in } \Pi \} & \text{otherwise}
 \end{cases}
 \]
-    \item The height of a proof is inductively defined in the usual way. We use $h(\Pi)$ to denote the height of the proof tree $\Pi$.
-\end{itemize}
+\end{definition}
+
+\begin{definition}[Height of a proof \agdalink{S4dot2.Generic.CutElimination.Defs.html\#height}]\label{def:height}
+The height $h(\Pi)$ of a proof $\Pi$ is defined by induction on the proof tree: an axiom has height $0$; a proof whose last rule has a single premise $\Pi_1$ has height $h(\Pi_1)+1$; and a proof whose last rule has two premises $\Pi_1$ and $\Pi_2$, that is $Cut$, $\vdash\!\wedge$, $\vee\!\vdash$ or $\to\!\vdash$, has height $\max\{h(\Pi_1),h(\Pi_2)\}+1$.
 \end{definition}
 
 \paragraph{Notation.}
@@ -923,7 +959,7 @@ Let $\Gamma$ be a sequence of formulae. In the following we denote by $\cana{\Ga
 
 We state and prove the Mix Lemma.
 
-\begin{lemma}[Mix Lemma \agdalink{S4dot2.CutElimination.MixNew.html\#mix}]\label{lem:mix}
+\begin{lemma}[Mix Lemma \agdalink{S4dot2.Generic.CutElimination.MixNew.html\#mix}]\label{lem:mix}
 Let $n \in \mathbb{N}$ and let $\pf{A}{s}$ be a p-formula of degree $n$.
 Let $\Pi$ be a proof of an e-sequent $\seq{\Gamma}{\Delta}$ and
 $\Pi'$ be a proof of an e-sequent $\seq{\Gamma'}{\Delta'}$.
@@ -950,7 +986,19 @@ The proof proceeds by well-founded induction on the pair $\langle n,\; h(\Pi) + 
 
     \item \textbf{Principal Case: $r$ introduces $\pf{A}{s}$ as the principal formula in $\Delta$, and $r'$ introduces $\pf{A}{s}$ as the principal formula in $\Gamma'$.}
         \begin{itemize}
-            \item \textit{Propositional Connectives:} Handled similarly to classical logic cut elimination. The cut on $\pf{A}{s}$ is replaced by one or more cuts on direct subformulae of $\pf{A}{s}$, which have a degree less than $n$.
+            \item \textit{The shape of the reduction.} In every principal case the reduction is lexicographic. It first performs cross mixes on the original cut formula, preserving its degree while decreasing the mix height; these calls remove the residual occurrences required by the all-occurrence formulation of Mix. It then performs one or more mixes on immediate subformulae, which strictly decrease the degree. The implication case requires three parent-level cross mixes and two subformula mixes; the remaining propositional and modal principal cases require two and one, respectively.
+
+            The intermediate cross mixes are not an artefact of the implementation, and this is where the reduction departs from the familiar cut-based one. Mix removes \emph{every} occurrence of $\pf{A}{s}$ from $\Delta$ and from $\Gamma'$, not only the principal one; the premises may well carry further copies of $\pf{A}{s}$ in their side contexts, and a reduction that went straight to the subformulae would leave those copies in place, so that the resulting proof would not have the required end-sequent. The cross mixes are what removes them. A useful consequence of the same asymmetry is that $\Gamma$ and $\Delta'$ are never pruned: an occurrence of a subformula landing there survives with no further argument, which is why the case of $\neg$, where both occurrences land in the untouched halves, is the shortest one to write down and not the representative one.
+
+            \item \textit{Propositional connectives: the case of $\rightarrow$.} We display the longest case, the one with $k=2$; the others are shorter instances of the same pattern. Suppose $\Pi$ ends with $\vdash\!\rightarrow$ applied to $\Pi_1 : \seq{\Gamma_1, \pf{B}{s}}{\pf{C}{s}, \Delta_1}$ and $\Pi'$ ends with $\rightarrow\!\vdash$ applied to $\Pi'_1 : \seq{\Gamma'_1}{\pf{B}{s}, \Delta'_1}$ and $\Pi'_2 : \seq{\Gamma'_2, \pf{C}{s}}{\Delta'_2}$. The reduction proceeds as follows.
+            \begin{enumerate}
+                \item Mix $\Pi_1$ with $\Pi'$ on $\pf{A}{s}$, obtaining $\Xi_1$. Same degree, the height of the left proof having decreased.
+                \item Mix $\Pi$ with $\Pi'_1$ on $\pf{A}{s}$, obtaining $\Xi_2$. Same degree, the height of the right proof having decreased.
+                \item Mix $\Pi$ with $\Pi'_2$ on $\pf{A}{s}$, obtaining $\Xi_3$. Same degree, again on the right.
+                \item Mix $\Xi_1$ with $\Xi_2$ on $\pf{C}{s}$, whose degree is smaller than $n$, obtaining $\Upsilon$.
+                \item Mix $\Xi_3$ with $\Upsilon$ on $\pf{B}{s}$, whose degree is smaller than $n$.
+            \end{enumerate}
+            Between steps~3 and~4, and again between~4 and~5, exchanges bring the subformula being cut to the head of the relevant context, and the final proof is obtained by contracting the duplicated contexts. The two subformula mixes are performed in this order, $\pf{C}{s}$ first and $\pf{B}{s}$ against the result, because the second one consumes the output of the first.
             \item \textit{Modal Operators (e.g., $\pf{A}{s} = \pf{\Box B}{s_0}$):}
                 Suppose $\Pi$ ends with $\vdash \Box$ applied to a premise $\Pi_p: \seq{\Gamma_p}{\pf{B}{s_0,x}, \Delta_p}$ (so $\Gamma = \Gamma_p$, $\Delta = (\pf{\Box B}{s_0}, \Delta_p)$).
                 And $\Pi'$ ends with $\Box \vdash$ applied to a premise $\Pi'_p: \seq{\Gamma'_p, \pf{B}{s_0,t}}{\Delta'_p}$ (so $\Gamma' = (\Gamma'_p, \pf{\Box B}{s_0})$, $\Delta' = \Delta'_p$).
@@ -962,6 +1010,10 @@ The proof proceeds by well-founded induction on the pair $\langle n,\; h(\Pi) + 
                     \item Apply the Mix Lemma (by IH, degree decrease) to $\langle \Pi_X, \Pi_Y \rangle$ cutting $\pf{B}{s_0,t}$, which has degree $n-1 < n$. The resulting proof, after potential contractions, proves $\seq{\Gamma, \cana{\Gamma'}}{\cana{\Delta}, \Delta'}$.
                 \end{enumerate}
                 The lexicographic measure decreases in each recursive call: steps 2 and 3 keep the same degree $n$ but strictly decrease the height sum, while step 4 strictly decreases the degree. The overall rank of the resulting proof $\Pi_{mix}$ remains $\le n$.
+
+            \item \textit{Modal operators: the dual case.} The pair $\vdash\!\Diamond$ against $\Diamond\!\vdash$ is treated symmetrically, with one difference that is worth recording because it is the only asymmetry of the whole case analysis. In the $\Box$ case the eigenrule is the left one, $\vdash\!\Box$, so the substitution of step~1 is applied to the \emph{left} premise and replaces its eigentoken by the token supplied by $\Box\!\vdash$ on the right. In the $\Diamond$ case the eigenrule is the right one, $\Diamond\!\vdash$, so the substitution is applied to the \emph{right} premise and replaces its eigentoken by the token supplied by $\vdash\!\Diamond$ on the left. The remaining three steps are literally the same, with the two cross mixes on $\pf{\Diamond B}{s_0}$ and the final mix on the immediate subformula at the merged position.
+
+            \item \textit{What the reduction also has to do.} The steps above account for the recursive calls, but not for the work that makes them fit together, and it is that work, rather than the recursion, that the formalisation is mostly made of. Each mix reconstructs the two contexts by removing every occurrence of the mix formula from the succedent of the left proof and from the antecedent of the right one; the results of two mixes performed on overlapping contexts are then contracted, since the same context can be duplicated by the two calls, and exchanges are needed to bring a formula into the position that the next rule expects. In the modal cases the eigentoken is renamed before the substitution, so as to avoid the capture that the freshness condition of the rule forbids, and each renaming carries with it the proofs that the rank and the height of the proof are preserved, since those are the two measures on which the recursion is justified. The bound on the rank of the result, finally, is not an afterthought: it is part of the statement being proved, and every step above has to propagate it.
         \end{itemize}
 \end{enumerate}
 In all cases, the resulting proof $\Pi_{mix}$ has $\delta[\Pi_{mix}] \le n$. For principal cases, new cuts are on formulae of degree strictly less than $n$. For non-principal cases, the inductive hypothesis ensures the rank condition is maintained.
@@ -980,7 +1032,7 @@ We show the type of the main function:
 The function \texttt{CutElimination} takes a proof $\Pi$ and returns a pair $(\Pi^*, p)$ where $\Pi^*$ proves the same sequent and $p$ witnesses $\delta[\Pi^*] = 0$.
 Internally, \texttt{cutElim} performs well-founded recursion on the rank bound $n \geq \delta[\Pi]$, with an accessibility witness \texttt{Acc} ensuring termination.
 
-\begin{theorem}[Cut elimination \agdalink{S4dot2.CutElimination.CutElimination.html\#CutElimination}]\label{thm:cut-elim} % Retain original label
+\begin{theorem}[Cut elimination \agdalink{S4dot2.Generic.CutElimination.CutElimination.html\#CutElimination}]\label{thm:cut-elim} % Retain original label
 If $\;\Pi$ is a proof of $\seq{\Gamma}{\Delta}$, then there
 exists a cut-free proof $\;\Pi^*$
 of $\seq{\Gamma}{\Delta}$.
@@ -1047,7 +1099,7 @@ The \texttt{mix} function takes two proofs $\Pi$ and $\Pi'$ whose ranks are boun
 Our cut elimination algorithm follows Gentzen's classical approach, adapted for the complexities introduced by modal operators and positional annotations. The algorithm operates through a rank-based elimination strategy, where cuts are systematically removed in order to decrease complexity as measured by the $\delta$ function.
 
 %\paragraph{Components.}
-The implementation is based on some interdependent components. The main \texttt{CutElimination} function performs rank-based induction, recursively eliminating cuts from subproofs before applying the mix lemma (\texttt{mix}) to combine the results. The \texttt{mix} function requires extensive case analysis on both the structure of the input proofs and the logical form of the cut formula. Supporting functions like \texttt{cutFreeProof}, \texttt{removeAll} and \texttt{structural} handle the structural manipulations needed to maintain proper sequent form throughout the elimination process. A key ingredient for managing the proof engineering challenge of the mix lemma is a verified subset solver\agdalink{S4dot2.Solver.Subset.html}: a domain-specific language for list subset expressions equipped with a normal-form decision procedure whose soundness is formally proven. Each invocation of the solver replaces what would otherwise be a manual chain of subset-inclusion lemmas, making the large case analysis of the mix function feasible in practice.
+The implementation is based on some interdependent components. The main \texttt{CutElimination} function performs rank-based induction, recursively eliminating cuts from subproofs before applying the mix lemma (\texttt{mix}) to combine the results. The \texttt{mix} function requires extensive case analysis on both the structure of the input proofs and the logical form of the cut formula. Two supporting functions, \texttt{removeAll} and \texttt{structural}, both discussed in detail below, take care of the manipulation of contexts: the sequent delivered by a recursive call seldom has literally the shape prescribed by the statement of the Mix Lemma, and it is the task of these two functions to turn the one into the other. No notion of well-formedness is at play here: by Definition~\ref{def:extseq} a sequent is a pair of finite lists of p-formulae, so every pair of contexts is a legitimate sequent, and the only question is ever the exact shape of the two lists. A key ingredient for managing the proof engineering challenge of the mix lemma is a verified subset solver\agdalink{S4dot2.Solver.Subset.html}: a domain-specific language for list subset expressions equipped with a normal-form decision procedure whose soundness is formally proven. Each invocation of the solver replaces what would otherwise be a manual chain of subset-inclusion lemmas, making the large case analysis of the mix function feasible in practice.
 
 %\paragraph{Termination.}
 Termination of \texttt{mix} is proved via well-founded induction on the lexicographic pair $\langle dg(A), h(\Pi) + h(\Pi') \rangle$: principal cases strictly decrease the degree, while non-principal cases keep the degree fixed and strictly decrease the height sum.
@@ -1055,9 +1107,11 @@ Termination of \texttt{CutElimination} combines well-founded recursion on a rank
 Cut-free proofs have rank zero, and every proof containing cuts has positive rank (determined by $\sup\{dg(\pf{A}{s})+1 \mid \pf{A}{s} \text{ is a cut formula}\}$), so the process terminates.
 
 %\paragraph{Auxiliary procedures.}
-We describe the structure of the code. The auxiliary procedures supporting the main algorithm deserve some explanations. Context normalization through \texttt{removeAll} addresses a technical issue that arises during the mix operation: when combining proofs, redundant occurrences of the cut formula can appear in intermediate contexts, requiring careful removal to maintain the proper logical structure. This function transforms contexts containing explicit cut formulae into properly filtered contexts that respect the intended semantics of the elimination process.
+We describe the structure of the code. The auxiliary procedures supporting the main algorithm deserve some explanations. The function \texttt{removeAll}\agdalink{S4dot2.Generic.CutElimination.Base.html\#_-_} is nothing other than the operation written $\cana{\Gamma}$ in the statement of the Mix Lemma: given a context $\Gamma$ and the mix formula $\pf{A}{s}$, it traverses the list $\Gamma$ and deletes \emph{every} occurrence of $\pf{A}{s}$, the test being the decidable equality of p-formulae. That all the occurrences go at once, and not just one of them, is precisely what separates mix from cut: contraction allows a premise to carry several copies of the mix formula, and a procedure removing one copy at a time would leave the remaining ones to be cut again.
 
-Structural restoration via \texttt{structural} \agdalink{S4dot2.System.html\#structural} performs the inverse operation, adding back formulae that were temporarily filtered out during elimination. This restoration uses structural weakening operations to ensure that the final cut-free proof maintains the same sequent structure as the original proof containing cuts. The delicate balance between removal and restoration is essential for preserving both provability and the logical relationships encoded in the original proof.
+The intermediate contexts are those of the sequents established by the recursive calls inside \texttt{mix}, before the last rule of the input proof is applied again. In a non-principal case that rule is applied to the mixes of its premises, so what the recursion delivers carries the filtered contexts of the \emph{premises}, whereas the case has to be concluded with the filtered contexts of the \emph{conclusion}. Reconciling the two amounts to knowing how filtering interacts with the list constructors, and this is what the accompanying lemmas provide: filtering distributes over concatenation, it discards the head of a list when that head is the mix formula\agdalink{S4dot2.Generic.CutElimination.MixHelpers.html\#lemma-removeAll-head-eq}, and it retains the head otherwise\agdalink{S4dot2.Generic.CutElimination.MixHelpers.html\#lemma-removeAll-head-neq}.
+
+Structural restoration via \texttt{structural} \agdalink{S4dot2.Generic.System.html\#structural} performs the inverse operation, adding back formulae that were temporarily filtered out during elimination. This restoration uses structural weakening operations to ensure that the final cut-free proof maintains the same sequent structure as the original proof containing cuts. The delicate balance between removal and restoration is essential for preserving both provability and the logical relationships encoded in the original proof.
 
 It is worth remarking that the function \texttt{structural}, whose type is
 \[
@@ -1066,31 +1120,75 @@ It is worth remarking that the function \texttt{structural}, whose type is
 subsumes all six structural rules ($W\vdash$, $\vdash W$, $C\vdash$, $\vdash C$, $E\vdash$, $\vdash E$) into a single derived combinator based on subset inclusion between contexts. This significantly simplifies the formalisation, since a single application of \texttt{structural} replaces what would otherwise require multiple explicit appeals to weakening, contraction, and exchange.
 
 %\paragraph{Correctness invariants.}
-The correctness of this process rests on several key lemmata: \textsf{cutFreeProof} extracts the transformed proof from the output of \textsf{CutElimination}, \textsf{cutFreeProof-isCutFree} proves that it has rank zero, and the fact that no Cut rule can have zero rank (handled by structural pattern matching on the proof) prevents infinite recursion while maintaining the rank bounds essential for termination.
+The correctness of the procedure rests on the invariant carried by the third argument of \texttt{cutElim}, namely $\delta[\Pi] \leq n$. It is this invariant that licenses the base case of the recursion: when the bound is zero the hypothesis forces $\delta[\Pi] = 0$, so $\Pi$ is already cut-free and is returned unchanged, no inspection of its last rule being needed; and since by Definition~\ref{def:rank} a proof ending in a Cut on $\pf{A}{s}$ has rank at least $dg(\pf{A}{s})+1$, no such proof can ever reach that case. A word is in order on \texttt{cutFreeProof}\agdalink{S4dot2.Generic.CutElimination.CutElimination.html\#cutFreeProof} and \texttt{cutFreeProof-isCutFree}\agdalink{S4dot2.Generic.CutElimination.CutElimination.html\#cutFreeProof-isCutFree}, whose names might promise more than they deliver: they are not lemmata of the elimination argument but the first and the second projection of the pair returned by \texttt{CutElimination}, introduced so that a later development may name the cut-free proof and the witness of its cut-freeness separately.
+
+\subsubsection{Running the procedure}\label{ssec:running}
+
+Since the development is constructive, the elimination procedure is not only a
+theorem but a function, and it is fair to ask what the type checker can actually
+observe when it is applied. A small module of worked
+examples\agdalink{S4dot2.CutElimination.Examples.html\#Examples} records four
+applications, chosen so as to separate the shapes of the reduction, together with
+what happens in each. In two of them the answer is computed outright: for a cut on
+an atom between two identity derivations, and for a non-principal cut whose left
+premise ends with a weakening, the type checker verifies by \texttt{refl} that the
+rank of the resulting proof reduces to zero, so that cut-freeness is established by
+computation and not merely by the certificate that the theorem carries. In the other
+two the answer is not computed. For a principal cut on a negation, the same equality
+is rejected in under four seconds: the left-hand side is stuck on a transport
+introduced by the reassociation of the contexts, so the equality does not hold by
+definitional conversion. For a principal cut on a conjunction, which is the smallest
+principal pair after the negation, the question did not finish within thirty minutes
+under a heap bound of fourteen gigabytes.
+
+The dividing line follows the analysis of the principal case given above: the two
+applications that compute are the two in which the reduction traverses neither the
+cross mixes on the parent formula nor the transports that reassociate the contexts,
+while the two that do not compute are the two in which it traverses them. These are
+bounded observations about definitional conversion in the present formalisation, and
+we draw no conclusion from them about nontermination or about intrinsic lower bounds;
+the whole module elaborates in under a second.
 
 \subsubsection{Corollaries of the Cut-Elimination}\label{ssec:corollaries}
 
-From the Cut-Elimination Theorem the Subformula Property follows as a corollary.
+The Cut-Elimination Theorem does not, by itself, constrain the shape of the formulae occurring in a derivation: what it produces is a cut-free derivation, and it is on cut-free derivations that such a constraint can be established. We therefore state the Subformula Property for cut-free proofs, and then read off analyticity by composing it with Theorem~\ref{thm:cut-elim}.
 
-\begin{corollary}[Subformula Property \agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty\%27}]
+\begin{corollary}[Subformula Property \agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty\%27}]\label{cor:subformula}
 Any formula occurring in a cut-free proof $\Pi$ of $\seq{\Gamma}{\Delta}$ is a subformula (in the sense of Definition~\ref{def:subform}) of some formula in the end-sequent $\seq{\Gamma}{\Delta}$.
 \end{corollary}
 
-Moreover, we also obtain a purely syntactic proof of consistency of the system:
+\begin{corollary}[Analyticity]\label{cor:analyticity}
+If $\seq{\Gamma}{\Delta}$ is provable in $\eseq$, then it has a proof in which every occurring formula is a subformula of some formula of $\seq{\Gamma}{\Delta}$.
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:cut-elim} there is a cut-free proof $\Pi^{*}$ of $\seq{\Gamma}{\Delta}$, and Corollary~\ref{cor:subformula} applied to $\Pi^{*}$ gives the claim. In \agda{} this is literally the composition of \texttt{CutElimination}, which returns a proof together with a witness of \texttt{isCutFree}, with \texttt{SubformulaProperty'}, which consumes exactly such a pair.
+\end{proof}
+
+\noindent
+This is where cut elimination enters: Corollary~\ref{cor:subformula} is established directly, by induction on the derivation, and makes no appeal to it, whereas Corollary~\ref{cor:analyticity} speaks about \emph{provable sequents} and is out of reach without it. Cut elimination is used in the same way in the syntactic proof of consistency of the system:
 
 \begin{corollary}[Consistency \agdalink{S4dot2.CutElimination.Consistency.html\#Consistency}]
 The empty sequent $\seq{}{}$ is not provable in $\mathsf{E}_{{\textsf{S4.2}}}$.
 \end{corollary}
 
-We conclude the section by showing the \agda{} type of the Subformula Property:
+\begin{proof}
+Every rule other than Cut leaves at least one formula in its conclusion, so a case analysis on the last rule shows that no cut-free proof of $\seq{}{}$ exists. Given an arbitrary proof of $\seq{}{}$, cut elimination produces a cut-free one, which is then impossible.
+\end{proof}
 
-\ExecuteMetaData[../AiML/NAMOR/Final/CutElimination/SubformulaProperty.tex]{subformulaProp}
+We conclude the section by showing the \agda{} type of the Subformula Property, i.e.\ of Corollary~\ref{cor:subformula}:
+\[
+\begin{array}{l}
+\text{\texttt{SubformulaProperty'}} : \{\Gamma\;\Delta : \text{\texttt{Ctx}}\} \to (\Pi : \seq{\Gamma}{\Delta}) \to \text{\texttt{isCutFree}}\;\Pi \\
+\qquad {}\to (\text{\texttt{pf}} : \text{\texttt{PFormula}}) \to \text{\texttt{pf}} \in \text{\texttt{allFormulasInProof}}\;\Pi \to \text{\texttt{isSubformulaOfSeq}}\;\text{\texttt{pf}}\;\Gamma\;\Delta
+\end{array}
+\]
 
 \noindent
-The function takes a cut-free proof $\Pi$ (witnessed by \texttt{isCutFree}), a p-formula \texttt{pf} occurring in $\Pi$ (via \texttt{allFormulasInProof}), and returns a proof that \texttt{pf} is a subformula of some formula in the end-sequent.
-The base case (\textsc{Ax}) is immediate; for each inference rule, the property is propagated from the premises by the induction hypothesis.
-Although the Subformula Property follows as a corollary of the Cut-Elimination Theorem (since cut-free proofs satisfy the property trivially), our formalisation also includes a \emph{direct} proof (\texttt{SubformulaProperty'}\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty\%27}) that establishes the result by induction on the derivation without appealing to cut elimination.
-The Cut case is discharged by contradiction: a proof with $\delta = 0$ cannot end in a Cut rule.
+The function takes a cut-free proof $\Pi$ (witnessed by \texttt{isCutFree}), a p-formula \texttt{pf} occurring anywhere in $\Pi$ --- \texttt{allFormulasInProof}\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#allFormulasInProof} collects the antecedent and the succedent of every sequent of the derivation --- and returns a proof that \texttt{pf} is a subformula of some formula in the end-sequent.
+It is defined by induction on the derivation: the base case (\textsc{Ax}) is immediate; the Cut case is discharged by contradiction, since a proof with $\delta = 0$ cannot end in a Cut rule; for every other rule the property is propagated from the premises by the induction hypothesis, the four modal rules using that a position is contained in each of its extensions, which is exactly the position extension allowed by Definition~\ref{def:subform}.
+
+The development also contains a weaker variant, \texttt{SubformulaProperty}\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty}, whose statement quantifies over \texttt{formulasInProof}\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#formulasInProof} rather than over \texttt{allFormulasInProof}. Since \texttt{formulasInProof} collects only the cut formulae of a derivation, and is therefore provably empty on cut-free ones, that variant is vacuously true and carries no information; the statement displayed above is the faithful one, and it is the one Corollary~\ref{cor:subformula} refers to.
 
 
 \commento{%--- old Discussion subsection (superseded by Section~\ref{sec:finite-semantics})
@@ -1239,7 +1337,7 @@ In this section we address a constructive and decidable version of a suitable se
 
 It is known from the literature that $\logic$ is semantically characterised by directed pre-orders, but it is also sound and complete with respect to the class of \emph{semilattices with minimum}, as shown in~\cite[Theorem~21]{Martini2024:S42NaturalDeduction}. This latter semantics, due to results by Goldblatt and Shehtmann~\cite{Goldblatt1980:Diodorean, Shehtman1983:ModalDomains} and called \emph{semilattice-models}, has been introduced to naturally interpret the notion of (set) position in the context of natural deduction.
 %The semantics of $\logic$ in its natural deduction formulation is given in terms of semilattice-models~\cite[Theorem~21]{Martini2024:S42NaturalDeduction}.
-In a few words, given a semilattice with minimum $\langle W, \leq, \mathsf{m} \rangle$ and a valuation $V : W \to 2^{At}$, an interpretation $\rho$ maps tokens to worlds and extends to positions via $\rho(\varnothing) = \mathsf{m}$ and $\rho(s \cup \{x\}) = \rho(x) \sqcup \rho(s)$. Semilattices with minimum are an essential mathematical tool to interpret positions. In fact, once one decides which point in the Kripke model could be uniquely associated with a set of tokens $\{x_1,\ldots,x_n\}$ by taking the supremum,
+In a few words, given a semilattice with minimum $\langle W, \leq, \mathsf{m} \rangle$ and a valuation $V : W \to 2^{\mathsf{At}}$, where $\mathsf{At} = \{p_0, p_1, \ldots\}$ is the set of propositional symbols of $\mathcal{L}$, an interpretation $\rho$ maps tokens to worlds and extends to a map $\bar{\rho}$ on positions via $\bar{\rho}(\varnothing) = \mathsf{m}$ and $\bar{\rho}(s \cup \{x\}) = \rho(x) \sqcup \bar{\rho}(s)$. In the \agda{} development a propositional symbol is represented by its index, so that $\mathsf{At}$ is $\mathbb{N}$ and a valuation takes the Boolean form of Definition~\ref{def:finite-model}. Semilattices with minimum are an essential mathematical tool to interpret positions. In fact, once one decides which point in the Kripke model could be uniquely associated with a set of tokens $\{x_1,\ldots,x_n\}$ by taking the supremum,
 in a directed pre-order this choice would not be unique, and in a direct pre-order the supremum of a finite set of elements might not exist. Thanks to semilattices with minimum, the problem disappears.
 
 The calculus $\eseq$ is derived from its natural-deduction counterpart presented in~\cite{Martini2024:S42NaturalDeduction}, with all the significant differences described in the Introduction. Consequently, its semantics can be defined in terms of semilattice models. However, if we aim to reason directly about the logical principles underlying the semantics (e.g., whether classical principles are employed, or what the computational interpretation of the definitions is), an interesting problem arises at this stage. Semilattice models, as well as in general Kripke structures, are intrinsically classical, and this conflicts with the constructive type theory on which \agda\ is based.
@@ -1270,7 +1368,7 @@ A \emph{finite semilattice model} is a record $\mathcal{M} = \langle n, \sqcup, 
 \end{itemize}
 \end{definition}
 
-A \emph{finite interpretation} is a function $\rho : \mathrm{Token} \to \mathrm{Fin}(n)$ mapping tokens to worlds. The extension to positions is defined by $\rho\text{-pos}(\rho, \varnothing) = \mathsf{m}$ and $\rho\text{-pos}(\rho, s \cup \{x\}) = \rho(x) \sqcup \rho\text{-pos}(\rho, s)$, faithfully implementing the semilattice interpretation.
+A \emph{finite interpretation} is a function $\rho : \mathrm{Token} \to \mathrm{Fin}(n)$ mapping tokens to worlds; as above, we write $\bar{\rho} : \mathcal{P} \to \mathrm{Fin}(n)$ for its extension to positions (\textsf{ρ-pos-fin} in the code\agdalink{S4dot2.Equivalence.FiniteModel.html\#\%CF\%81-pos-fin}), defined by $\bar{\rho}(\varnothing) = \mathsf{m}$ and $\bar{\rho}(s \cup \{x\}) = \rho(x) \sqcup \bar{\rho}(s)$, faithfully implementing the semilattice interpretation.
 
 
 \bigskip
@@ -1285,7 +1383,7 @@ The evaluation function $\mathsf{eval} : \mathrm{Fin}(n) \to \mathrm{Formula} \t
 Since the carrier is finite, both quantifiers reduce to bounded iterations and the evaluation is total and decidable.
 \end{definition}
 
-\emph{Satisfaction} of a position-formula $\pf{A}{s}$ by an interpretation $\rho$ is defined as $\rho \Vdash \pf{A}{s} \;\Leftrightarrow\; \mathsf{eval}(\rho\text{-pos}(\rho, s), A) = \mathsf{true}$.
+\emph{Satisfaction} of a position-formula $\pf{A}{s}$ by an interpretation $\rho$ is defined as $\rho \Vdash \pf{A}{s} \;\Leftrightarrow\; \mathsf{eval}(\bar{\rho}(s), A) = \mathsf{true}$: the position $s$ selects, through $\bar{\rho}$, the world at which the modal formula $A$ is evaluated.
 We write $\mathcal{M}, \rho \Vdash \Gamma$ when $\rho \Vdash \pf{A}{s}$ for every $\pf{A}{s} \in \Gamma$, and $\mathcal{M}, \rho \Vdash_\exists \Delta$ when there exists $\pf{B}{t} \in \Delta$ with $\rho \Vdash \pf{B}{t}$.
 
 \begin{definition}[Logical Consequence \agdalink{S4dot2.Equivalence.FiniteModel.html\#_\%E2\%8A\%A8finseq_}]\label{def:logical-consequence}
@@ -1307,7 +1405,7 @@ A \emph{modal semantics} $\mathsf{ms}$ for a finite model $\mathcal{M}$ is a rec
 \end{itemize}
 \end{definition}
 
-Notice that every finite model $\mathcal{M}$ admits a canonical instance, called \textsf{default\-Modal\-Semantics}, obtained directly from the bounded iteration defining $\mathsf{eval}$.
+Notice that every finite model $\mathcal{M}$ admits a canonical instance, called \textsf{default\-Modal\-Semantics}\agdalink{S4dot2.Equivalence.FiniteModel.html\#defaultModalSemantics}, obtained directly from the bounded iteration defining $\mathsf{eval}$; this is in fact the only instance we use, here and elsewhere in the development. The point of isolating the four witnesses in a record is therefore not to compare competing semantics, but to fix the interface through which the modal cases of the soundness proof are discharged: the formalised soundness function is parametric in $\mathsf{ms}$, so its induction never unfolds the bounded iterations that implement $\mathsf{eval}$. The same theorem is thus reused unchanged on other families of finite models built in the development --- for instance on models whose worlds are the subgroups of a finite abelian group --- and it would survive a change in the definition of $\mathsf{eval}$.
 
 Thanks to the purely constructive interpretation described above, we can prove soundness of $\eseq$ w.r.t.\ the finite semilattice semantics: syntactic derivability implies semantic entailment.
 
@@ -1319,9 +1417,9 @@ We only sketch the proof.
 \begin{proof}
 The proof proceeds by induction on the derivation of $\seq{\Gamma}{\Delta}$. The propositional cases (conjunction, disjunction, implication, negation) are standard. The modal cases are more interesting:
 \begin{itemize}
-\item $\Box\vdash$: from $\pf{\Box A}{s}$ in $\Gamma$ and $s \subseteq t$ in the rule premise, we obtain $\mathsf{eval}(\rho(s), \Box A) = \mathsf{true}$ and $\rho(s) \leq \rho(t)$, then apply \textsf{box-sem}.
+\item $\Box\vdash$: from $\pf{\Box A}{s}$ in $\Gamma$ and $s \subseteq t$ in the rule premise, we obtain $\mathsf{eval}(\bar{\rho}(s), \Box A) = \mathsf{true}$ and $\bar{\rho}(s) \leq \bar{\rho}(t)$, then apply \textsf{box-sem}.
 
-\item $\vdash\Box$: the eigenposition condition ensures that the fresh token $x$ does not occur in $\Gamma$ or $\Delta$. For any world $v \geq \rho\text{-pos}(\rho, s)$, updating $\rho$ to map $x$ to $v$ satisfies the premise, and the freshness guarantees that all other satisfaction conditions are preserved.
+\item $\vdash\Box$: the eigenposition condition ensures that the fresh token $x$ does not occur in $\Gamma$ or $\Delta$. For any world $v \geq \bar{\rho}(s)$, updating $\rho$ to map $x$ to $v$ satisfies the premise, and the freshness guarantees that all other satisfaction conditions are preserved.
 
 \item $\Diamond\vdash$ and $\vdash\Diamond$ are handled dually.
 \end{itemize}
@@ -1348,18 +1446,18 @@ We can now establish the full correspondence between the Hilbert axiomatisation 
 
 The direction from $\hilbertlogic{\logic}$ to $\eseq$ is exactly the Weak Completeness Theorem~\ref{th:weakcompleteness}: if $\vdash_{\hilbertlogic{\logic}} A$ then $\seq{}{A^\varnothing}$ is provable in $\eseq$. For the converse, we rely on the well-known \emph{finite model property} (FMP) of $\logic$. Following Harrop~\cite{Harrop1958:FiniteModels}, we say that a logic has the FMP if every non-provable formula has a finite counter\-model. In the formalisation, we encode this as a definition together with two classical postulates from the literature, and derive all remaining results.
 
-\begin{definition}[Finite Model Property \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#HasFMP}]\label{def:fmp}
+\begin{definition}[Finite Model Property \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical.HasFMP}]\label{def:fmp}
 A formula $A$ is \emph{valid} in a finite model $\mathcal{M}$ if $\mathsf{eval}(\mathcal{M}, w, A) = \mathsf{true}$ for every world $w$. The logic $\logic$ has the \emph{finite model property} if for every formula $A$ with $\nvdash_{\hilbertlogic{\logic}} A$, there exists a finite model $\mathcal{M}$ in which $A$ is not valid~\cite{Harrop1958:FiniteModels}.
 \end{definition}
 
-\begin{definition}[Segerberg FMP \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#segerberg-FMP}]\label{post:segerberg-fmp}
+\begin{definition}[Segerberg FMP \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical}]\label{post:segerberg-fmp}
 \textbf{Postulate.} If $\nvdash_{\hilbertlogic{\logic}} A$, then there exists a finite model $\mathcal{M}$ such that $\mathsf{eval}(\mathcal{M}, \mathsf{m}, A) = \mathsf{false}$.
 
 \smallskip\noindent\textit{Justification.}
 Segerberg~\cite{Segerberg1971:EssayClassicalModal} proves the FMP for $\logic$ in two steps. First, Kripke completeness yields an $\logic$ model $M$ and a world $w_0$ falsifying $A$. Lemmon filtration through the subformulas of $A$ produces a \emph{finite} $\logic$ model preserving truth of subformulas (Theorem~7.4) and convergence (Theorem~7.6(iv)); reflexivity and transitivity are preserved by the $\mathsf{K4}$ base case. Second, restricting to the upset $\{w' \mid w' \geq w_0\}$ yields a finite semilattice with minimum $w_0$, so the countermodel falsifies $A$ at its minimum.
 \end{definition}
 
-\begin{definition}[Decidability of $\vdash_{\hilbertlogic{\logic}}$ \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#decidable-\%E2\%8A\%A2S4dot2}]\label{post:decidable}
+\begin{definition}[Decidability of $\vdash_{\hilbertlogic{\logic}}$ \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical}]\label{post:decidable}
 \textbf{Postulate.} For every formula $A$, either $\vdash_{\hilbertlogic{\logic}} A$ or $\nvdash_{\hilbertlogic{\logic}} A$.
 
 \smallskip\noindent\textit{Justification.}
@@ -1367,7 +1465,7 @@ Harrop~\cite{Harrop1958:FiniteModels} proves that the FMP implies decidability (
 Since $\logic$ has the FMP, provability in $\hilbertlogic{\logic}$ is decidable.
 \end{definition}
 
-\begin{theorem}[FMP for $\logic$ \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#fmp-S4dot2}]\label{thm:fmp-s4dot2}
+\begin{theorem}[FMP for $\logic$ \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical.fmp-S4dot2}]\label{thm:fmp-s4dot2}
 $\logic$ has the finite model property.
 \end{theorem}
 
@@ -1375,7 +1473,7 @@ $\logic$ has the finite model property.
 Given $\nvdash_{\hilbertlogic{\logic}} A$, the Segerberg FMP postulate yields a finite model $\mathcal{M}$ with $\mathsf{eval}(\mathcal{M}, \mathsf{m}, A) = \mathsf{false}$. In particular, $A$ is not valid in $\mathcal{M}$.
 \end{proof}
 
-\begin{lemma}[Hilbert FMP \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#hilbert-FMP}]\label{lem:hilbert-fmp}\label{def:hilbert-fmp}
+\begin{lemma}[Hilbert FMP \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical.hilbert-FMP}]\label{lem:hilbert-fmp}\label{def:hilbert-fmp}
 If $\mathsf{eval}(\mathcal{M}, \mathsf{m}, A) = \mathsf{true}$ for every finite model $\mathcal{M}$ and modal semantics $\mathsf{ms}$, then $\vdash_{\hilbertlogic{\logic}} A$.
 \end{lemma}
 
@@ -1383,22 +1481,22 @@ If $\mathsf{eval}(\mathcal{M}, \mathsf{m}, A) = \mathsf{true}$ for every finite 
 By decidability of $\vdash_{\hilbertlogic{\logic}}$: if $\vdash_{\hilbertlogic{\logic}} A$ we are done; otherwise the Segerberg FMP postulate yields a finite model $\mathcal{M}$ with $\mathsf{eval}(\mathcal{M}, \mathsf{m}, A) = \mathsf{false}$, contradicting the hypothesis with the default modal semantics.
 \end{proof}
 
-\begin{theorem}[Sequent-to-Hilbert \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#seq\%E2\%86\%92hilbert}]\label{thm:seq-to-hilbert}
+\begin{theorem}[Sequent-to-Hilbert \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical.seq\%E2\%86\%92hilbert}]\label{thm:seq-to-hilbert}
 If $\seq{}{A^\varnothing}$ is provable in $\eseq$, then $\vdash_{\hilbertlogic{\logic}} A$.
 \end{theorem}
 
 \begin{proof}
-Let $\mathcal{M}$ be an arbitrary finite model with modal semantics $\mathsf{ms}$. Choose the interpretation $\rho = \lambda\_.\ \mathsf{m}$, so that $\rho\text{-pos}(\rho, \varnothing) = \mathsf{m}$. The antecedent is empty, so context satisfaction $\mathcal{M}, \rho \Vdash []$ holds vacuously. By the soundness theorem (Theorem~\ref{thm:finite-soundness}), there exists $\pf{A'}{s'} \in [A^\varnothing]$ with $\rho \Vdash \pf{A'}{s'}$. Since $[A^\varnothing]$ is a singleton, pattern-matching on the membership witness forces $A' = A$ and $s' = \varnothing$, yielding $\mathsf{eval}(\mathcal{M}, \mathsf{m}, A) = \mathsf{true}$. The result follows by Lemma~\ref{lem:hilbert-fmp}.
+Let $\mathcal{M}$ be an arbitrary finite model with modal semantics $\mathsf{ms}$. Choose the interpretation $\rho = \lambda\_.\ \mathsf{m}$, so that $\bar{\rho}(\varnothing) = \mathsf{m}$. The antecedent is empty, so context satisfaction $\mathcal{M}, \rho \Vdash []$ holds vacuously. By the soundness theorem (Theorem~\ref{thm:finite-soundness}), there exists $\pf{A'}{s'} \in [A^\varnothing]$ with $\rho \Vdash \pf{A'}{s'}$. Since $[A^\varnothing]$ is a singleton, pattern-matching on the membership witness forces $A' = A$ and $s' = \varnothing$, yielding $\mathsf{eval}(\mathcal{M}, \mathsf{m}, A) = \mathsf{true}$. The result follows by Lemma~\ref{lem:hilbert-fmp}.
 \end{proof}
 
-\begin{corollary}[Hilbert--Sequent Equivalence \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#hilbert-sequent-equiv}]\label{cor:hilbert-sequent-equiv}
+\begin{corollary}[Hilbert--Sequent Equivalence \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical.hilbert-sequent-equiv}]\label{cor:hilbert-sequent-equiv}
 For every formula $A$:
 \[
 \vdash_{\hilbertlogic{\logic}} A \quad\Longleftrightarrow\quad \seq{}{A^\varnothing} \text{ is provable in } \eseq.
 \]
 \end{corollary}
 
-\begin{corollary}[Hilbert Finite Soundness \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#hilbert-finite-soundness}]
+\begin{corollary}[Hilbert Finite Soundness \agdalink{S4dot2.Equivalence.ClassicalEquivalence.html\#Classical.hilbert-finite-soundness}]
 If $\vdash_{\hilbertlogic{\logic}} A$, then for every finite model $\mathcal{M}$ with modal semantics $\mathsf{ms}$ and interpretation $\rho$, $\mathcal{M}, \rho \Vdash_\exists [A^\varnothing]$.
 \end{corollary}
 
@@ -1428,14 +1526,14 @@ In this context, we also want to mention the ongoing developments of modal syste
 In~\cite{Maggesi2021:ProvabilityLogic}, the authors present a formalised proof of modal completeness for G\"odel–L\"ob provability logic (GL) within \texttt{HOL Light}.
 This work is further extended towards a full mechanization of GL in~\cite{Maggesi2023:GodelLob}.
 Building upon these contributions, the approach has been generalized in the \textsf{HOLMS} framework to encompass a broader class of normal modal logics~\cite{Bilotta2024:GrowingHOLMS}, and further extended with a modular proof-search framework based on formalised modal completeness~\cite{Bilotta2026:ModularHOLMS}.
-This project constitutes a closely related reference, as our proposed implementation is part of an ongoing effort to develop a modular implementation of all normal extensions of $\mathsf{K}$ up to $\axname{S}5$ (see Section~\ref{sec:conclusions_future}).
+This project constitutes a closely related reference, as our proposed implementation is part of an ongoing effort towards a modular implementation covering the spectrum from $\mathsf{K}$ to $\axname{S}5$ (see Section~\ref{sec:conclusions_future}).
 
 
 \section{Conclusions and Future Work}\label{sec:conclusions_future}
 
 \newcommand{\framework}{\mathsf{NAMOR}}
 
-In this paper, we introduced $\mathsf{E}_{\textsf{S4.2}}$, an extended sequent calculus for the modal logic $\logic$, which enriches formulae with coordinates called positions, represented as sets of uninterpreted tokens, to manage modal information. We implemented the system and its metatheoretical structural properties in the \agda{}~proof assistant: we prove the weak completeness w.r.t.\ a standard Hilbert-style and provide a formal syntactic proof of the cut-elimination theorem, from which the consistency of the system and the subformula property follow.
+In this paper, we introduced $\mathsf{E}_{\textsf{S4.2}}$, an extended sequent calculus for the modal logic $\logic$, which enriches formulae with coordinates called positions, represented as sets of uninterpreted tokens, to manage modal information. We implemented the system and its metatheoretical structural properties in the \agda{}~proof assistant: we prove the weak completeness w.r.t.\ a standard Hilbert-style and provide a formal syntactic proof of the cut-elimination theorem, from which the consistency of the system follows and which, combined with our direct proof of the subformula property for cut-free derivations, yields the analyticity of the calculus.
 On the semantic side, we formalised a finite decidable variant of the semilattice semantics, proved a constructive soundness theorem and established the equivalence between provability in $\hilbertlogic{\logic}$ and provability in $\eseq$ (Section~\ref{sec:finite-semantics}).
 
 
@@ -1447,7 +1545,7 @@ On the semantic side, several additional directions are being explored within th
 
 Furthermore, we intend to examine whether our position-based calculus can be extended to other logical systems. For example, the proof theory of the central intermediate system $\axname{S4.3}$ remains underexplored outside labelled frameworks. More generally, and perhaps more significantly, we aim to understand how position-based calculi can be employed to capture non-normal extensions of $\axname{K}$, which have recently been standardised in~\cite{Dalmonte2025:MinimalModal} and were previously studied using linear nested sequents, a syntactic reformulation of 2-sequents, in~\cite{Pimentel2019}.
 
-Finally, the results presented in this work are part of a broader research project whose core is a unified framework, denoted by $\framework$ (\textsf{New Agda Modal Realization}), implemented in Cubical \agda{} and building upon the theory of extended sequents~\cite{Martini2023:CutElimination}. The aim of $\framework$ is to encompass the full range of normal modal logics from $\mathsf{K}$ to $\mathsf{S5}$, including $\logic$. In accordance with the underlying theoretical systems, $\framework$ is designed to be highly parametric, since all normal modal systems share a common set of rules and individual systems can be obtained by appropriately instantiating specific parameters. We are currently implementing the Cut-Elimination Theorem, which can be established uniformly for all normal extensions of $\axname{K}$, and, in light of the considerations discussed above, we are also investigating possible extensions of $\framework$ to non-normal modal logics.
+Finally, the results presented in this work are part of a broader research project whose core is a unified framework, denoted by $\framework$ (\textsf{New Agda Modal Realization}), implemented in Cubical \agda{} and building upon the theory of extended sequents~\cite{Martini2023:CutElimination}. The aim of $\framework$ is to encompass the full range of normal modal logics from $\mathsf{K}$ to $\mathsf{S5}$, including $\logic$. In accordance with the underlying theoretical systems, $\framework$ is designed to be highly parametric, since all normal modal systems share a common set of rules and individual systems can be obtained by appropriately instantiating specific parameters. The current $\framework$ cut-elimination construction is uniform for the insensitive presentations that instantiate its full coherence and Mix interface. The crucial eigen-root substitution law has also been verified for the prefix relations used by $\axname{K}$, $\axname{K4}$, and $\axname{S4}$, and trivially for $\axname{S5}$; this local coherence result is not, however, a cut-elimination theorem for the sensitive $\axname{K}$ and $\axname{K4}$ presentations. $\logic$ shares $\framework$'s mode-theory, constraint, and adequacy infrastructure, while its current cut-elimination result inside $\framework$ is obtained by verified replay through the standalone $\logic$ calculus. Machine-checked counterexamples delimit the present eigen-root rebase interface for $\logic$, $\axname{S4.3}$, and $\axname{S4.4}$; they do not refute cut elimination for those logics. Uniform coverage from $\axname{K}$ to $\axname{S5}$ remains future work. In light of the considerations discussed above, we are also investigating possible extensions of $\framework$ to non-normal modal logics.
 
 \commento{
 \begin{itemize}
@@ -1482,7 +1580,7 @@ A recent paper extends the application of $\logic$  into abstract algebra. Berge
     \item[Intuitionistic S4.2]
     A natural direction is the investigation of an intuitionistic version of S4.2. 
     Syntactically, for the extended sequent calculus $\mathsf{E}_{{\textsf{S4.2}}}$, this would primarily involve restricting sequents to have at most one formula in the succedent. 
-    Further adjustments to rules, particularly for negation or $\bot$, would be necessary to maintain intuitionistic principles, akin to how natural deduction systems for intuitionistic logics might remove a classical $\bot_c$ rule and include an intuitionistic $\bot_i$ rule. 
+    Further adjustments to rules, particularly for negation and for a falsity constant, which the present language does not include, would be necessary to maintain intuitionistic principles, akin to how natural deduction systems for intuitionistic logics might remove a classical $\bot_c$ rule and include an intuitionistic $\bot_i$ rule. 
     A key technical challenge would be to establish strong normalization and confluence for a corresponding natural deduction system, or analogous proof-theoretic properties for the sequent calculus. 
     Furthermore, such an intuitionistic system for S4.2 could prove valuable in exploring connections with constructive set theories, such as ZFI and CZF. 
 
