@@ -455,9 +455,8 @@ $\hilbertlogic{\logic}$ is the smallest set $X$ of formulae that      contains a
 \end{definition}
 We write $\vdash_{\hilbertlogic{\logic}}  A$  for  $A\in \hilbertlogic{\logic}$. Notice that, in the presence of Axiom \textbf{P3}, the underlying propositional logic is \emph{classical}.
 
-%% NOTA REVISIONE (decisione pendente, R1-6a-quater): qui va deciso se aggiungere una nota
-%% di erratum che segnali la correzione rispetto alle presentazioni precedenti del gruppo,
-%% con rinvio al testimone S4dot2/Algebra/LegacyBasisRefuted.agda.
+\paragraph{Relation to previous presentations.} The axiomatisation above extends the one printed in~\cite{Martini2023:CutElimination}, where the connectives are primitive as here but the basis lists only \textbf{P1}--\textbf{P3}, $\axname{K}$ and the modal schemas. For the primitive language that basis is in fact too weak: it does not derive $(A\wedge A)\to A$, a fact we verified formally in the course of this revision (the machine-checked refutation is archived in the accompanying repository\agdalink{S4dot2.Algebra.LegacyBasisRefuted.html\#idempotenceNotDerivable}). The repair is local and entirely contained in the present paper: it adds the eight schemas above and extends the completeness proof accordingly, while the sequent calculus and the cut-elimination development are untouched.
+
 All six connectives are \emph{primitive constructors of the syntax}: this is a decision about the representation, taken with the planned intuitionistic development in mind, and it should be kept apart from logical independence. Since $\wedge$, $\vee$ and $\Diamond$ are not abbreviations, the axiomatisation has to govern them explicitly. This is why the basis above contains the introduction and elimination schemas for conjunction and disjunction, and both directions of the duality relating $\Diamond$ and $\Box$. Dropping them would leave the basis too weak to be adequate: it would not even derive $(A\wedge A)\to A$, since none of \textbf{P1}--\textbf{P3}, $\axname{K}$, $\axname{D}$, $\axname{T}$, $\axname{4}$, $\axname{G/.2}$ mentions $\wedge$ at all. The schema $\axname{D}$ is retained for continuity with the standard presentations of the logic, but in the presence of $\Diamond$def$_1$, $\Diamond$def$_2$ and $\axname{T}$ it is redundant.
 
 
@@ -678,7 +677,20 @@ The following is the key lemma to prove the main theorem:
 
 \begin{proof}
 
-We show here that the axiom schemas of $\logic$ are derivable at the empty position $\varnothing$. The derivations are given one by one in the formalisation, and the exhaustive match that consumes them is the completeness function itself, so no schema can be silently omitted. Two remarks are worth making. First, the propositional schemas, together with $\axname{D}$ and $\axname{T}$, are in fact derived at an \emph{arbitrary} position $s$, and the empty position is only the instance used here; the schemas $\axname{K}$, $\axname{4}$, $\axname{G/.2}$ and the two duality schemas are derived at $\varnothing$, which is what the statement above requires. Second, the derivation of $\axname{D}$ is the one place where the empty extension in the modal rules is used essentially: it is obtained from $\seq{\pf{A}{s}}{\pf{A}{s}}$ by $\Box\vdash$ and $\vdash\Diamond$, both with an empty extension, followed by $\vdash\!\to$.
+We show here that the axiom schemas of $\logic$ are derivable at the empty position $\varnothing$. The derivations are given one by one in the formalisation, and the exhaustive match that consumes them is the completeness function itself, so no schema can be silently omitted. Two remarks are worth making. First, the propositional schemas, together with $\axname{D}$ and $\axname{T}$, are in fact derived at an \emph{arbitrary} position $s$, and the empty position is only the instance used here; the schemas $\axname{K}$, $\axname{4}$, $\axname{G/.2}$ and the two duality schemas are derived at $\varnothing$, which is what the statement above requires. Second, the derivation of $\axname{D}$ is the one place where the empty extension in the modal rules is used essentially: it is obtained from $\seq{\pf{A}{s}}{\pf{A}{s}}$ by $\Box\vdash$ and $\vdash\Diamond$, both with an empty extension, followed by $\vdash\!\to$. Explicitly, using $\pf{A}{s,\varnothing}=\pf{A}{s}$:
+\[
+\AxiomC{}
+\RightLabel{$Ax$}
+\UnaryInfC{$\seq{\pf{A}{s}}{\pf{A}{s}}$}
+\RightLabel{$\Box\vdash\ (t=\varnothing)$}
+\UnaryInfC{$\seq{\pf{\Box A}{s}}{\pf{A}{s}}$}
+\RightLabel{$\vdash\Diamond\ (t=\varnothing)$}
+\UnaryInfC{$\seq{\pf{\Box A}{s}}{\pf{\Diamond A}{s}}$}
+\RightLabel{$\vdash\!\to$}
+\UnaryInfC{$\seq{}{\pf{\Box A\to\Diamond A}{s}}$}
+\DisplayProof
+\]
+.
 
 We display the \agda{} statements of the three propositional schemas, whose derivations are established at an arbitrary position $s$; the full derivation terms, from three rule applications for \textbf{P1} to a longer combinator expression for \textbf{P2}, are available through the links~\agdalink{S4dot2.Equivalence.HilbertCompleteness.html\#derive-P1}~\agdalink{S4dot2.Equivalence.HilbertCompleteness.html\#derive-P2}~\agdalink{S4dot2.Equivalence.HilbertCompleteness.html\#derive-P3}.
 
@@ -789,6 +801,19 @@ This last step deserves a comment, since it is where the geometry of positions b
 \noindent
 
 Closure under Necessitation~\agdalink{PaperCode.html\#closureNec} and Modus Ponens~\agdalink{PaperCode.html\#closureMP} is also clearly derivable. We directly show the \agda{}~code:
+The manipulation of the proof tree is the following, where the dashed step is not a rule of the calculus but an application of the lifting lemma:
+\[
+\AxiomC{$\Pi$}
+\noLine
+\UnaryInfC{$\seq{}{\pf{A}{\varnothing}}$}
+\dashedLine
+\RightLabel{lift by $\{x\}$, $x$ fresh for the eigenpositions of $\Pi$}
+\UnaryInfC{$\seq{}{\pf{A}{x}}$}
+\RightLabel{$\vdash\Box$ (eigentoken $x$)}
+\UnaryInfC{$\seq{}{\pf{\Box A}{\varnothing}}$}
+\DisplayProof
+\]
+
 \ExecuteMetaData[PaperCode.tex]{NEC}
 \noindent
 The proof of Necessitation applies the $\vdash\Box$ rule to the hypothesis \texttt{pA}.
@@ -895,6 +920,7 @@ $\vdash \Box$ and $\Diamond \vdash$ require some freshness conditions.
 The following lemma shows that replacing a token $x$ with a position $t$
 (a set of tokens) in any position $s$ of a proof $\Pi$ is a safe operation,
 provided that certain freshness conditions hold.
+We state it at the outset because of the use made of it throughout the section: the substitution it provides is applied in the two principal modal reductions of the Mix Lemma and in the commutations across the eigenrules, and the renaming of an eigentoken is its singleton case.
 
 
 \begin{lemma}[Token-Position Substitution Lemma \agdalink{S4dot2.Generic.CutElimination.ProofSubst.html\#substTokenToPosProof}]\label{lem:pos-subst-validity}
@@ -1025,12 +1051,65 @@ The proof proceeds by well-founded induction on the pair $\langle n,\; h(\Pi) + 
             \item \textit{Propositional connectives: the case of $\rightarrow$.} The case analysis follows the standard pattern of classical cut elimination, for which see, e.g., Troelstra and Schwichtenberg~\cite{Troelstra2000:BasicProofTheory}. We display the longest case, the one with $k=2$; the others are shorter instances of the same pattern. Suppose $\Pi$ ends with $\vdash\!\rightarrow$ applied to $\Pi_1 : \seq{\Gamma_1, \pf{B}{s}}{\pf{C}{s}, \Delta_1}$ and $\Pi'$ ends with $\rightarrow\!\vdash$ applied to $\Pi'_1 : \seq{\Gamma'_1}{\pf{B}{s}, \Delta'_1}$ and $\Pi'_2 : \seq{\Gamma'_2, \pf{C}{s}}{\Delta'_2}$. The reduction proceeds as follows.
             \begin{enumerate}
                 \item Mix $\Pi_1$ with $\Pi'$ on $\pf{A}{s}$, obtaining $\Xi_1$. Same degree, the height of the left proof having decreased.
-                \item Mix $\Pi$ with $\Pi'_1$ on $\pf{A}{s}$, obtaining $\Xi_2$. Same degree, the height of the right proof having decreased.
-                \item Mix $\Pi$ with $\Pi'_2$ on $\pf{A}{s}$, obtaining $\Xi_3$. Same degree, again on the right.
+                \item Mix $\Pi$ with $\Pi'_2$ on $\pf{A}{s}$, obtaining $\Xi_2$. Same degree, the height of the right proof having decreased.
+                \item Mix $\Pi$ with $\Pi'_1$ on $\pf{A}{s}$, obtaining $\Xi_3$. Same degree, again on the right.
                 \item Mix $\Xi_1$ with $\Xi_2$ on $\pf{C}{s}$, whose degree is smaller than $n$, obtaining $\Upsilon$.
                 \item Mix $\Xi_3$ with $\Upsilon$ on $\pf{B}{s}$, whose degree is smaller than $n$.
             \end{enumerate}
             Between steps~3 and~4, and again between~4 and~5, exchanges bring the subformula being cut to the head of the relevant context, and the final proof is obtained by contracting the duplicated contexts. The two subformula mixes are performed in this order, $\pf{C}{s}$ first and $\pf{B}{s}$ against the result, because the second one consumes the output of the first.
+
+The whole reduction is displayed in Figure~\ref{fig:imp-reduction}, with the exact types of the intermediate proofs; there $\Gamma'$ abbreviates $\Gamma'_1,\Gamma'_2$ and $\Delta'$ abbreviates $\Delta'_1,\Delta'_2$, and the structural steps contract the duplicated contexts and reorder the pruned ones.
+
+\begin{figure}[t]\small
+\emph{The three cross mixes on the parent formula $\pf{A}{s}=\pf{B\to C}{s}$:}
+\[
+\AxiomC{$\Pi_1$}
+\noLine
+\UnaryInfC{$\seq{\Gamma_1, \pf{B}{s}}{\pf{C}{s}, \Delta_1}$}
+\AxiomC{$\Pi'$}
+\noLine
+\UnaryInfC{$\seq{\Gamma', \pf{A}{s}}{\Delta'}$}
+\RightLabel{Mix $\pf{A}{s}$}
+\BinaryInfC{$\Xi_1 : \seq{\Gamma_1, \pf{B}{s}, \cana{\Gamma'}}{\pf{C}{s}, \cana{\Delta_1}, \Delta'}$}
+\DisplayProof
+\]
+\[
+\AxiomC{$\Pi$}
+\noLine
+\UnaryInfC{$\seq{\Gamma_1}{\pf{A}{s}, \Delta_1}$}
+\AxiomC{$\Pi'_2$}
+\noLine
+\UnaryInfC{$\seq{\Gamma'_2, \pf{C}{s}}{\Delta'_2}$}
+\RightLabel{Mix $\pf{A}{s}$}
+\BinaryInfC{$\Xi_2 : \seq{\Gamma_1, \cana{\Gamma'_2}, \pf{C}{s}}{\cana{\Delta_1}, \Delta'_2}$}
+\DisplayProof
+\qquad
+\AxiomC{$\Pi$}
+\noLine
+\UnaryInfC{$\seq{\Gamma_1}{\pf{A}{s}, \Delta_1}$}
+\AxiomC{$\Pi'_1$}
+\noLine
+\UnaryInfC{$\seq{\Gamma'_1}{\pf{B}{s}, \Delta'_1}$}
+\RightLabel{Mix $\pf{A}{s}$}
+\BinaryInfC{$\Xi_3 : \seq{\Gamma_1, \cana{\Gamma'_1}}{\cana{\Delta_1}, \pf{B}{s}, \Delta'_1}$}
+\DisplayProof
+\]
+\emph{The two mixes on the immediate subformulae, at strictly smaller degree:}
+\[
+\AxiomC{$\Xi_1$}
+\AxiomC{$\Xi_2$}
+\RightLabel{Mix $\pf{C}{s}$, structural}
+\BinaryInfC{$\Upsilon : \seq{\Gamma_1, \pf{B}{s}, \cana{\Gamma'}}{\cana{\Delta_1}, \Delta'}$}
+\DisplayProof
+\qquad
+\AxiomC{$\Xi_3$}
+\AxiomC{$\Upsilon$}
+\RightLabel{Mix $\pf{B}{s}$, structural}
+\BinaryInfC{$\seq{\Gamma_1, \cana{\Gamma'}}{\cana{\Delta_1}, \Delta'}$}
+\DisplayProof
+\]
+\caption{The principal reduction for $\pf{A}{s}=\pf{B\to C}{s}$: three cross mixes at degree $n$ and decreasing mix height, then two mixes at degree strictly below $n$. The labels ``structural'' stand for the contractions and exchanges that normalise the duplicated and reordered contexts.}\label{fig:imp-reduction}
+\end{figure}
             \item \textit{Modal Operators (e.g., $\pf{A}{s} = \pf{\Box B}{s_0}$):}
                 Suppose $\Pi$ ends with $\vdash \Box$ applied to a premise $\Pi_p: \seq{\Gamma_p}{\pf{B}{s_0,x}, \Delta_p}$ (so $\Gamma = \Gamma_p$, $\Delta = (\pf{\Box B}{s_0}, \Delta_p)$).
                 And $\Pi'$ ends with $\Box \vdash$ applied to a premise $\Pi'_p: \seq{\Gamma'_p, \pf{B}{s_0,t}}{\Delta'_p}$ (so $\Gamma' = (\Gamma'_p, \pf{\Box B}{s_0})$, $\Delta' = \Delta'_p$).
@@ -1414,12 +1493,12 @@ Since the carrier is finite, both quantifiers reduce to bounded iterations and t
 \end{definition}
 
 \emph{Satisfaction} of a position-formula $\pf{A}{s}$ by an interpretation $\rho$ is defined as $\rho \Vdash \pf{A}{s} \;\Leftrightarrow\; \mathsf{eval}(\bar{\rho}(s), A) = \mathsf{true}$: the position $s$ selects, through $\bar{\rho}$, the world at which the modal formula $A$ is evaluated.
-We write $\mathcal{M}, \rho \Vdash \Gamma$ when $\rho \Vdash \pf{A}{s}$ for every $\pf{A}{s} \in \Gamma$, and $\mathcal{M}, \rho \Vdash_\exists \Delta$ when there exists $\pf{B}{t} \in \Delta$ with $\rho \Vdash \pf{B}{t}$.
+We write $\mathcal{M}, \rho \Vdash_\forall \Gamma$ when $\rho \Vdash \pf{A}{s}$ for every $\pf{A}{s} \in \Gamma$, and $\mathcal{M}, \rho \Vdash_\exists \Delta$ when there exists $\pf{B}{t} \in \Delta$ with $\rho \Vdash \pf{B}{t}$; the plain $\Vdash$ is kept for a single p-formula. In the formalisation the two judgements are distinguished by role rather than by quantifier (\texttt{⊩Ctxᶠ} and \texttt{⊩Succᶠ}).
 
 \begin{definition}[Logical Consequence \agdalink{S4dot2.Equivalence.FiniteModel.html\#_\%E2\%8A\%A8finseq_}]\label{def:logical-consequence}
 We say that $\Gamma$ \emph{semantically entails} $\Delta$ over finite models, written $\Gamma \models_{\mathrm{fin}} \Delta$, if for every finite model $\mathcal{M}$ and interpretation $\rho$:
 \[
-\mathcal{M}, \rho \Vdash \Gamma \;\implies\; \mathcal{M}, \rho \Vdash_\exists \Delta.
+\mathcal{M}, \rho \Vdash_\forall \Gamma \;\implies\; \mathcal{M}, \rho \Vdash_\exists \Delta.
 \]
 \end{definition}
 
