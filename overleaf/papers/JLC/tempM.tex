@@ -1101,7 +1101,8 @@ The whole reduction is displayed in Figure~\ref{fig:imp-reduction}, with the exa
 \RightLabel{Mix $\pf{C}{s}$, structural}
 \BinaryInfC{$\Upsilon : \seq{\Gamma_1, \pf{B}{s}, \cana{\Gamma'}}{\cana{\Delta_1}, \Delta'}$}
 \DisplayProof
-\qquad
+\]
+\[
 \AxiomC{$\Xi_3$}
 \AxiomC{$\Upsilon$}
 \RightLabel{Mix $\pf{B}{s}$, structural}
@@ -1270,11 +1271,11 @@ If $\seq{\Gamma}{\Delta}$ is provable in $\eseq$, then it has a proof in which e
 \end{corollary}
 
 \begin{proof}
-By Theorem~\ref{thm:cut-elim} there is a cut-free proof $\Pi^{*}$ of $\seq{\Gamma}{\Delta}$, and Corollary~\ref{cor:subformula} applied to $\Pi^{*}$ gives the claim. In \agda{} this is literally the composition of \texttt{CutElimination}, which returns a proof together with a witness of \texttt{isCutFree}, with \texttt{SubformulaProperty'}, which consumes exactly such a pair.
+By Theorem~\ref{thm:cut-elim} there is a cut-free proof $\Pi^{*}$ of $\seq{\Gamma}{\Delta}$, and Theorem~\ref{cor:subformula} applied to $\Pi^{*}$ gives the claim. In \agda{} this is literally the composition of \texttt{CutElimination}, which returns a proof together with a witness of \texttt{isCutFree}, with \texttt{SubformulaProperty'}, which consumes exactly such a pair.
 \end{proof}
 
 \noindent
-This is where cut elimination enters: Corollary~\ref{cor:subformula} is established directly, by induction on the derivation, and makes no appeal to it, whereas Corollary~\ref{cor:analyticity} speaks about \emph{provable sequents} and is out of reach without it. Cut elimination is used in the same way in the syntactic proof of consistency of the system:
+This is where cut elimination enters: Theorem~\ref{cor:subformula} is established directly, by induction on the derivation, and makes no appeal to it, whereas Corollary~\ref{cor:analyticity} speaks about \emph{provable sequents} and is out of reach without it. Cut elimination is used in the same way in the syntactic proof of consistency of the system:
 
 \begin{corollary}[Consistency \agdalink{S4dot2.CutElimination.Consistency.html\#Consistency}]
 The empty sequent $\seq{}{}$ is not provable in $\mathsf{E}_{{\textsf{S4.2}}}$.
@@ -1284,14 +1285,14 @@ The empty sequent $\seq{}{}$ is not provable in $\mathsf{E}_{{\textsf{S4.2}}}$.
 Every rule other than Cut leaves at least one formula in its conclusion, so a case analysis on the last rule shows that no cut-free proof of $\seq{}{}$ exists. Given an arbitrary proof of $\seq{}{}$, cut elimination produces a cut-free one, which is then impossible.
 \end{proof}
 
-We conclude the section by showing the \agda{} code of the Subformula Property, i.e.\ of Corollary~\ref{cor:subformula}. The listing is generated from the source and displays, besides the signature, the four cases that carry the content: the base case, the impossible Cut case, and the two flavours of modal cases.
+We conclude the section by showing the \agda{} code of the Subformula Property, i.e.\ of Theorem~\ref{cor:subformula}. The listing is generated from the source and displays, besides the signature, the four cases that carry the content: the base case, the impossible Cut case, and the two flavours of modal cases.
 
 \ExecuteMetaData[SubformulaCode.tex]{subformulaProperty}
 
 \noindent
 The function is defined by induction on the derivation: the base case (\textsc{Ax}) is immediate; the Cut case is discharged by contradiction, since a proof with $\delta = 0$ cannot end in a Cut rule; for every other rule the property is propagated from the premises by the induction hypothesis. The two modal cases displayed show that the propagation is not uniform: $\Box\vdash$ and $\vdash\Diamond$ extend the principal position by a whole position, and the witness is \texttt{⊑-merge-l}, while the two eigenrules extend it by a single fresh token, and the witness is \texttt{⊑-insertToken-base}. The two witnesses instantiate the same subformula clause of Definition~\ref{def:subform} along two different position extensions.
 
-The development also contains a weaker variant, \texttt{SubformulaProperty}~\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty}, which differs in both the domain and the codomain: it quantifies over \texttt{formulasInProof}~\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#formulasInProof} rather than over \texttt{allFormulasInProof}, and it concludes membership in the set of subformulae of the end-sequent rather than the subformula relation itself. Since \texttt{formulasInProof} collects only the cut formulae of a derivation, on cut-free proofs the variant is vacuously true: its hypotheses cannot be met, and its Ax clause is an absurdity pattern. We display the primed version precisely because it is the one with content.
+{\sloppy The development also contains a weaker variant, \texttt{SubformulaProperty}~\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty}, which differs in both the domain and the codomain: it quantifies over \texttt{formulasInProof}~\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#formulasInProof} rather than over \texttt{allFormulasInProof}, and it concludes membership in the set of subformulae of the end-sequent rather than the subformula relation itself. Since \texttt{formulasInProof} collects only the cut formulae of a derivation, on cut-free proofs the variant is vacuously true: its hypotheses cannot be met, and its Ax clause is an absurdity pattern. We display the primed version precisely because it is the one with content.\par}
 
 
 \commento{%--- old Discussion subsection (superseded by Section~\ref{sec:finite-semantics})
