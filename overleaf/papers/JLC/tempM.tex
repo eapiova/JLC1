@@ -610,16 +610,18 @@ with the constraints:  $x \notin s$ and $x$ fresh for $\Gamma, \Delta$ for $\vda
 \end{figure}
 
 
-We show here the \agda{} implementation of the modal fragment~\agdalink{S4dot2.Generic.System.html\#_⊢_}, because it is the place where the side conditions of the two eigenrules become explicit: what the displayed rules state as a proviso on $x$ appears in the formalisation as three premises of the constructor, one for the principal position and one for each context.
+We show here the \agda{} implementation of the modal fragment~\agdalink{S4dot2.Generic.System.html\#_⊢_.□⊢}, because it is the place where the side conditions of the two eigenrules become explicit: what the displayed rules state as a proviso on $x$ appears in the formalisation as three premises of the constructor, one for the principal position and one for each context.
 
+\noindent\begin{minipage}{\linewidth}
 \ExecuteMetaData[SystemCode.tex]{modalRules}
+\end{minipage}
 
 
 %\section{On weak completeness and Semantics}\label{sec:completeness}
 
 
 \subsection{Weak Completeness}
-The system $\eseq$ proves, at the empty position, all the theorems of the Hilbert-style presentation of $\logic$ (see also~\cite{Martini2024:S42NaturalDeduction}). The derivations below are given at the empty position $\varnothing$. Several of them, namely the propositional schemas together with $\axname{D}$ and $\axname{T}$, are in fact established at an arbitrary position, and $\varnothing$ is only the instance used here. Transporting a derivation from $\varnothing$ to an arbitrary position $s$ is not a matter of weakening, since $W\vdash$ and $\vdash W$ add a p-formula to a context and leave positions untouched: the mechanism is the position lifting lemma, which raises every position occurring in a derivation and carries a freshness proviso on the eigenpositions.
+The system $\eseq$ proves, at the empty position, all the theorems of the Hilbert-style presentation of $\logic$ (see also~\cite{Martini2024:S42NaturalDeduction}). The derivations below are given at the empty position $\varnothing$. Several of them, namely the propositional schemas together with $\axname{D}$ and $\axname{T}$, are in fact established at an arbitrary position, and $\varnothing$ is only the instance used here. Transporting a derivation from $\varnothing$ to an arbitrary position $s$ is done by the position lifting lemma~\agdalink{S4dot2.Equivalence.HilbertCompleteness.html\#lift-proof}, which raises every position occurring in a derivation and carries a freshness proviso on the eigenpositions.
 
 
 
