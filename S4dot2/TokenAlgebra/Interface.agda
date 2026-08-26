@@ -46,7 +46,7 @@ record TokenAlgebra : Type₁ where
     discreteToken : Discrete Token
     discretePos   : Discrete Pos
 
-    ---- Operations (statement-visible ⇒ fields) ----
+    ---- Operations ----
     ε      : Pos
     sing   : Token → Pos
     _∪_    : Pos → Pos → Pos
