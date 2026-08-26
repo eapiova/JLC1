@@ -11,3 +11,8 @@ open import S4dot2.Generic.CutElimination.MixNew taggedToken public
   using (mix)
 open import S4dot2.Generic.CutElimination.CutElimination taggedToken public
   using (CutElimination)
+
+-- Named witnesses of the instantiated chain, so that the paper can link to
+-- this module through stable anchors (re-exports get none in the HTML).
+taggedMix = mix
+taggedCutElimination = CutElimination

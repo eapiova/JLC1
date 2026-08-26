@@ -98,6 +98,9 @@
 \newunicodechar{⚙}{{\gearsymbol ⚙}}
 \newunicodechar{∈}{\ensuremath{\in}}
 \newunicodechar{⊑}{\ensuremath{\sqsubseteq}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{ᵖ}{\ensuremath{^{\mathsf{p}}}}
+\newunicodechar{₀}{\ensuremath{_0}}
 
 \usepackage{xcolor}
 \usepackage{soul}
@@ -106,6 +109,9 @@
 
 % Agda formalisation links
 \newcommand{\agdaBaseUrl}{https://eapiova.github.io/s4dot2-cut-elimination}  % Agda HTML hosted via GitHub Pages
+% Evidenziatore per la lettura interna: neutro nel build pulito, acceso in arancione
+% dal build del diff (make-jlc-diff.sh). Avvolgere i passaggi con \spotlight{...}.
+\newcommand{\spotlight}[1]{#1}
 \newcommand{\agdalink}[1]{\href{\agdaBaseUrl/#1}{\raisebox{-0.1em}{\includegraphics[height=0.9em]{agda-bird}}}}
 
 
@@ -325,43 +331,20 @@ The use of \emph{sets} of tokens for positions is a key feature of $\calculus$, 
 
 A token is defined in the proof assistant as a natural number (an element in the set $\mathbb{N}$). This provides a countably infinite supply of names without requiring a fixed bound parameter. Decidable equality on $\mathbb{N}$ (\textsf{discreteℕ} from the \textsf{agda/cubical} library~\cite{VMA2021:CubicalAgda}) enables implementing ``freshness'' constraints in the modal rules, which require introducing a token not previously used in a given context: a fresh token is obtained by taking one more than the maximum token occurring in the current context.
 
-A nameless representation is a plausible alternative, although we did not implement a de Bruijn or locally nameless prototype. If the modal eigenrules were reformulated as scoped binders, de Bruijn indices could internalise $\alpha$-equivalence for eigentokens and reduce explicit fresh-name generation. They would not, however, eliminate all bookkeeping: the eigencondition would reappear as well-scoping and lifting obligations, while combining independently constructed derivations in the Mix procedure would require systematic reindexing. Moreover, tokens occur as elements of commutative, idempotent finite-set positions, and the formalisation substitutes a token with an entire position; index shifts would therefore have to act coherently on these sets. We retained named natural-number tokens because they closely mirror the paper calculus, provide decidable equality and deterministic fresh generation, and interact directly with the semilattice interpretation. The cost is explicit freshness, renaming, and preservation lemmas, especially in the modal Mix cases. This is a pragmatic design choice; without a nameless implementation, we make no empirical claim about relative proof size or efficiency.
+A nameless representation is a plausible alternative, although we did not implement a de Bruijn or locally nameless prototype. If the modal eigenrules were reformulated as scoped binders, de Bruijn indices could internalise $\alpha$-equivalence for eigentokens and reduce explicit fresh-name generation. They would not, however, eliminate all bookkeeping: the eigencondition would reappear as well-scoping and lifting obligations, while combining independently constructed derivations in the Mix procedure would require systematic reindexing. Moreover, tokens occur as elements of commutative, idempotent finite-set positions, and the formalisation substitutes a token with an entire position; index shifts would therefore have to act coherently on these sets. We retained named natural-number tokens because they closely mirror the paper calculus, provide decidable equality and deterministic fresh generation, and interact directly with the semilattice interpretation. The cost is explicit freshness, renaming, and preservation lemmas, especially in the modal Mix cases. \spotlight{This is a pragmatic design choice; without a nameless implementation, we make no empirical claim about relative proof size or efficiency.}
 
 A position is implemented as a \emph{sorted descending list} (SDL) of tokens, a data structure from the \textsf{agda/cubical} library that provides a canonical representation of finite sets. The choice is more significant than it may look: positions occur inside the \emph{types} of derivations, so two positions denoting the same set of tokens must be \emph{equal}, not merely equivalent, or every statement about proofs would have to be quotiented by that equivalence or carried out over setoids. A canonical representation, one representative per finite set, dissolves the issue, and it moreover yields decidable equality and membership. Set operations, union (\textsf{merge}~\agdalink{S4dot2.SortedPosition.html\#merge}), membership ($\in$~\agdalink{S4dot2.SortedPosition.html\#_∈Pos_}), subset ($\subseteq$~\agdalink{S4dot2.SortedPosition.html\#_⊑_}), are all decidable.
 
-A related representation choice concerns \emph{contexts}: sequents are pairs of finite lists of p-formulae, with exchange as an explicit rule, rather than pairs of finite multisets. Cubical \agda{} does offer finite multisets as a higher inductive type (\textsf{FMSet}), which would make exchange definitionally invisible; the price is that every function out of a higher inductive type must be shown to respect its path constructors, so each definition by recursion on a context, and the mix procedure performs many, would carry an extra coherence obligation. With lists, contexts are ordinary data, definitions pattern-match freely, and the bookkeeping is confined to explicit structural steps discharged by a solver (Section~\ref{ssec:implementation}). We have not implemented the multiset alternative, so this is a design rationale, not a comparison of two developments.
+A related representation choice concerns \emph{contexts}: sequents are pairs of finite lists of p-formulae, with exchange as an explicit rule, rather than pairs of finite multisets. Cubical \agda{} does offer finite multisets as a higher inductive type (\textsf{FMSet}), which would make exchange definitionally invisible; the price is that every function out of a higher inductive type must be shown to respect its path constructors, so each definition by recursion on a context, and the mix procedure performs many, would carry an extra coherence obligation. With lists, contexts are ordinary data, definitions pattern-match freely, and the bookkeeping is confined to explicit structural steps discharged by a solver (Section~\ref{ssec:implementation}). \spotlight{We have not implemented the multiset alternative, so this is a design rationale, not a comparison of two developments.}
 
 The proof-theoretic core is parameterised by a \textsf{TokenAlgebra} interface~\agdalink{S4dot2.TokenAlgebra.Interface.html\#TokenAlgebra}. This interface exposes decidable token and position carriers, finite-set operations and their extensional laws, a finite enumeration of positions, and a measured fresh-token operation; it does not expose an ordering of tokens or an SDL canonical-form constructor. Syntax, inference rules, proof substitution, Mix, and cut elimination are all parameterised by this interface.
 
-\begin{verbatim}
-record TokenAlgebra : Type1 where
-  field
-    Token Pos       : Type0
-    discreteToken   : Discrete Token
-    discretePos     : Discrete Pos
+\ExecuteMetaData[TokenAlgebraCode.tex]{tokenAlgebra}
 
-    eps             : Pos
-    sing            : Token -> Pos
-    _cup_           : Pos -> Pos -> Pos
-    insert remove   : Token -> Pos -> Pos
-    _in_            : Token -> Pos -> Type0
-    _in?_           : forall x s -> Dec (x in s)
 
-    -- algebraic, membership, and removal laws omitted
-    posExt           : ...
-    toList           : Pos -> List Token
-    tokNat           : Token -> Nat
-    freshAbove       : Nat -> Token
-    freshAbove-bound : forall n -> n < tokNat (freshAbove n)
-\end{verbatim}
+The public development instantiates it with natural-number tokens and sorted descending lists. As a non-trivial parametricity check, the repository also instantiates the full generic Mix and cut-elimination modules~\agdalink{S4dot2.TokenAlgebra.Instances.TaggedToken.html\#taggedToken} with tagged tokens $\mathbb{N}\times\mathsf{Bool}$~\agdalink{S4dot2.TokenAlgebra.Instances.TaggedTokenCutElim.html\#taggedMix}, ordered through the injective measure $(n,b)\mapsto 2n+\mathsf{bit}(b)$. This second instance still represents positions by SDLs: it establishes independence from the concrete token carrier, not yet from the position data structure itself. \spotlight{A normalised trie could in principle provide another implementation of the same interface, but we have neither implemented nor benchmarked such an alternative.}
 
-\noindent
-(The display renders the Unicode identifiers of the source in ASCII; the interface itself is
-linked above.)
-
-The public development instantiates it with natural-number tokens and sorted descending lists. As a non-trivial parametricity check, the repository also instantiates the full generic Mix and cut-elimination modules~\agdalink{S4dot2.TokenAlgebra.Instances.TaggedToken.html\#taggedToken} with tagged tokens $\mathbb{N}\times\mathsf{Bool}$~\agdalink{S4dot2.TokenAlgebra.Instances.TaggedToken.html\#taggedToken}, ordered through the injective measure $(n,b)\mapsto 2n+\mathsf{bit}(b)$. This second instance still represents positions by SDLs: it establishes independence from the concrete token carrier, not yet from the position data structure itself. A normalised trie could in principle provide another implementation of the same interface, but we have neither implemented nor benchmarked such an alternative.
-
-This abstraction boundary currently covers syntax and the proof-theoretic cut-elimination development. The semantic, Hilbert-equivalence, and completeness developments still use the concrete SDL-based public modules.
+\spotlight{This abstraction boundary currently covers syntax and the proof-theoretic cut-elimination development. The semantic, Hilbert-equivalence, and completeness developments still use the concrete SDL-based public modules.}
 
 \bigskip 
 
@@ -1660,7 +1643,7 @@ On the semantic side, we formalised a finite decidable variant of the semilattic
 \paragraph{Relation to our previous work.}
 This paper stands on two earlier contributions, and it is worth stating exactly what is inherited and what is new. From the extended-sequent tradition culminating in~\cite{Martini2023:CutElimination} we inherit the position discipline itself: formulae decorated with sets of tokens, the analogy between modal rules and quantifier rules, and the design principle that systems in the $\axname{K}$--$\axname{S4}$ spectrum are obtained by constraining the two eigenrules. From~\cite{Martini2024:S42NaturalDeduction} we inherit the treatment of $\logic$ specifically, namely the way directedness is captured by a side condition rather than by a new connective or a labelled relation. What is new here is, first, the calculus $\eseq$ itself, a sequent presentation of $\logic$ designed so that cut elimination goes through by the classical Gentzen strategy; and second, the machine-checked metatheory, which none of the previous papers had.
 
-A natural question, raised by one of the referees, is whether we considered formalising the natural deduction calculus of~\cite{Martini2024:S42NaturalDeduction} instead. We did not attempt it, and the choice of a sequent presentation was made with the mechanisation in mind. In $\eseq$ a judgement is a pair of flat lists of p-formulae, every rule concludes a judgement of that same shape, and the whole metatheory proceeds by structural induction on the last rule: derivations are first-order trees, and the case analysis of the Mix procedure is a pattern match on pairs of final rules, which is the kind of definition a proof assistant handles well. A natural deduction presentation would have added a layer the sequent calculus does not have, the discharge of hypotheses, on top of the binder-like bookkeeping that positions already require for eigentokens. This is a design argument, not a measurement: we have not implemented the natural deduction system, and we make no claim about the relative size or difficulty of that formalisation.
+A natural question, raised by one of the referees, is whether we considered formalising the natural deduction calculus of~\cite{Martini2024:S42NaturalDeduction} instead. We did not attempt it, and the choice of a sequent presentation was made with the mechanisation in mind. In $\eseq$ a judgement is a pair of flat lists of p-formulae, every rule concludes a judgement of that same shape, and the whole metatheory proceeds by structural induction on the last rule: derivations are first-order trees, and the case analysis of the Mix procedure is a pattern match on pairs of final rules, which is the kind of definition a proof assistant handles well. A natural deduction presentation would have added a layer the sequent calculus does not have, the discharge of hypotheses, on top of the binder-like bookkeeping that positions already require for eigentokens. \spotlight{This is a design argument, not a measurement: we have not implemented the natural deduction system, and we make no claim about the relative size or difficulty of that formalisation.}
 
 Our investigation opens several promising research directions. As ongoing work, we are focusing on the definition of an intuitionistic version of $\logic$, denoted by $I\logic$, which constitutes a non-trivial task. On the one hand, a natural candidate for the intuitionistic deductive system is obtained by restricting sequents to have a single formula on the right-hand side. On the other hand, a standard Hilbert-style intuitionistic axiomatisation is (up to our knowledge) not available in the literature and must therefore be carefully developed, particularly with regard to the elimination of classical axioms.
 Moreover, extending the approach partially adopted in this paper for finite model semantics, we aim to develop a fully intuitionistic metatheory and semantics for $I\logic$, based exclusively on constructive mathematical principles.

@@ -1,0 +1,53 @@
+%<*tokenAlgebra>
+\begin{code}%
+\>[0]\AgdaKeyword{record}\AgdaSpace{}\AgdaFunction{TokenAlgebra}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Type₁}\AgdaSpace{}\AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaFunction{no-eta-equality}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaKeyword{field}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaComment{---- Carriers ----}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaDatatype{Token}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Type₀}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{Pos}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Type₀}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{discreteToken}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaFunction{Discrete}\AgdaSpace{}\AgdaDatatype{Token}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{discretePos}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaFunction{Discrete}\AgdaSpace{}\AgdaFunction{Pos}\<%
+\\
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaComment{---- Operations (statement-visible ⇒ fields) ----}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{ε}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaFunction{Pos}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{sing}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Token}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{\_∪\_}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaFunction{Pos}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{insert}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Token}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{remove}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Token}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{\_∈ᵖ\_}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Token}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{Pos}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaDatatype{Type₀}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{\_∈ᵖ?\_}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaSymbol{∀}\AgdaSpace{}\AgdaBound{x}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaDatatype{Dec}\AgdaSpace{}\AgdaSymbol{(}\AgdaBound{x}\AgdaSpace{}\AgdaFunction{∈ᵖ}\AgdaSpace{}\AgdaBound{s}\AgdaSymbol{)}\<%
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaComment{-- (algebraic, membership and removal laws omitted, incl. posExt)}\<%
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{toList}\AgdaSpace{}\AgdaSpace{}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaFunction{Pos}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaDatatype{List}\AgdaSpace{}\AgdaDatatype{Token}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{∈→toList}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaSymbol{∀}\AgdaSpace{}\AgdaBound{x}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaBound{x}\AgdaSpace{}\AgdaFunction{∈ᵖ}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaBound{x}\AgdaSpace{}\AgdaFunction{∈L}\AgdaSpace{}\AgdaFunction{toList}\AgdaSpace{}\AgdaBound{s}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{toList→∈}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaSymbol{∀}\AgdaSpace{}\AgdaBound{x}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaBound{x}\AgdaSpace{}\AgdaFunction{∈L}\AgdaSpace{}\AgdaFunction{toList}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaBound{x}\AgdaSpace{}\AgdaFunction{∈ᵖ}\AgdaSpace{}\AgdaBound{s}\<%
+\\
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaComment{---- Token measure + fresh generation ----}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{tokℕ}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Token}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaDatatype{ℕ}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{freshAbove}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{ℕ}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaDatatype{Token}\<%
+\\
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{freshAbove-bound}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaSymbol{∀}\AgdaSpace{}\AgdaBound{n}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaBound{n}\AgdaSpace{}\AgdaFunction{<}\AgdaSpace{}\AgdaFunction{tokℕ}\AgdaSpace{}\AgdaSymbol{(}\AgdaFunction{freshAbove}\AgdaSpace{}\AgdaBound{n}\AgdaSymbol{)}\<%
+\end{code}
+%</tokenAlgebra>
