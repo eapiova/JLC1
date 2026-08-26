@@ -1,8 +1,9 @@
-\documentclass{article}
-\usepackage{agda}
-\begin{document}
+-- Worked derivations displayed in the JLC paper: the Geach axiom, and the
+-- closure of derivability under necessitation and modus ponens.  Formerly a
+-- literate .lagda.tex module; converted to a plain module so that the HTML
+-- rendering shows code only, and the paper's listings are generated from
+-- this source by scripts/gen-agda-snippet.py.
 
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module PaperCode where
@@ -25,9 +26,7 @@ import S4dot2.CutElimination.CutElimination
 import S4dot2.CutElimination.MixNew
 import S4dot2.CutElimination.SubformulaProperty
 import S4dot2.CutElimination.Consistency
-\end{code}
 
-\begin{code}
 private module G (A : Formula) where
   α = ∅
   β = insertToken 0 α
@@ -48,10 +47,7 @@ private module G (A : Formula) where
   ax-subst = subst (λ pos → [ A ^ δ ] ⊢ [ A ^ pos ]) (sym eq-γ0-δ) (Ax {A = A} {s = δ})
   ax-subst' : [ A ^ (β ∘ singleton-pos 1) ] ⊢ [ A ^ (γ ∘ singleton-pos 0) ]
   ax-subst' = subst (λ pos → [ A ^ pos ] ⊢ [ A ^ (γ ∘ singleton-pos 0) ]) (sym eq-β1-δ) ax-subst
-\end{code}
 
-%<*geachAxiom>
-\begin{code}
 geachAxiom : [] ⊢ [ (♢ (□ A) ⇒ □ (♢ A)) ^ ∅ ]
 geachAxiom {A} = let open G A in
   ⊢⇒ {Γ = []} {s = α} {Δ = []}
@@ -59,10 +55,7 @@ geachAxiom {A} = let open G A in
       (⊢□ {x = 1} fresh-α-1 fresh-Γ-⊢□ (TokenFresh-[] {x = 1})
         (⊢♢ {t = singleton-pos 0}
           (□⊢ {Γ = []} {s = β} {t = singleton-pos 1} ax-subst'))))
-\end{code}
-%</geachAxiom>
 
-\begin{code}
 private module N (A : Formula) (pA : [] ⊢ [ A ^ ∅ ]) where
   xN = suc (maxEigenposToken pA)
   tN = singleton-pos xN
@@ -70,10 +63,7 @@ private module N (A : Formula) (pA : [] ⊢ [ A ^ ∅ ]) where
   liftedN = lift-proof tN pA ncN
   fresh-∅N : xN ∉Pos ∅
   fresh-∅N = λ ()
-\end{code}
 
-%<*NEC>
-\begin{code}
 closureNec : [] ⊢ [ A ^ ∅ ]
            → [] ⊢ [ (□ A) ^ ∅ ]
 closureNec {A} pA = let open N A pA in
@@ -82,17 +72,9 @@ closureNec {A} pA = let open N A pA in
     (TokenFresh-[] {x = xN})
     (TokenFresh-[] {x = xN})
     liftedN
-\end{code}
-%</NEC>
 
-%<*MP>
-\begin{code}
 closureMP : [] ⊢ [ A ^ ∅ ]
           → [] ⊢ [ (A ⇒ B) ^ ∅ ]
           → [] ⊢ [ B ^ ∅ ]
 closureMP pA pA⇒B =
   Cut pA⇒B (⇒⊢ {Γ₁ = []} Ax pA)
-\end{code}
-%</MP>
-
-\end{document}
