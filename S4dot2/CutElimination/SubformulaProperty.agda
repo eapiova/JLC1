@@ -844,122 +844,12 @@ seq-sub-⊢⇒ {Γ} {Δ} {A} {B} {s} {pf} pfIn | inl pfInΓA with mem-++-split {
                            (mem-++-l (subst (pf ∈_) (sym (ctx-sub-single ((A ⇒ B) ^ s)))
                              (mem-++-l (sub-⇒₁ pfInAsub)))))
 
--- =============================================================================
--- Subformula Property Theorem
--- =============================================================================
+-- ========================================================================
+-- (A vacuous variant, quantifying over the cut formulas only, used to live
+--  here under the name SubformulaProperty; it was removed when the
+--  contentful theorem below took the plain name.  See the paper, §3.1.2.)
+-- ========================================================================
 
--- The key insight: for a cut-free proof, formulasInProof only contains
--- formulas that are subformulas of the conclusion formulas.
---
--- Proof: By induction on the proof structure.
--- - Ax: No extra formulas
--- - Cut: Cannot occur (proof is cut-free)
--- - Logical rules: Subformulas of the principal formula are subformulas of conclusion
--- - Structural rules: Pass through (same formulas)
--- - Modal rules: Position-extended subformulas (handled by the subformula definition)
-
--- The Subformula Property:
--- Every formula in a cut-free proof is a subformula of the conclusion.
-SubformulaProperty : {Γ Δ : Ctx} → (Π : Γ ⊢ Δ) → isCutFree Π
-                   → (pf : PFormula) → pf ∈ formulasInProof Π
-                   → pf ∈ sequentSubformulas Γ Δ
-SubformulaProperty Ax _ pf ()
-SubformulaProperty (Cut {A = A} Π₁ Π₂) cf pf pfIn = ⊥-rec (max-suc-neq-zero cf)
-  where
-    -- Helper: suc n ≤ max (suc n) m
-    suc-≤-max : (n m : ℕ) → suc n ≤ max (suc n) m
-    suc-≤-max n zero = ≤-refl
-    suc-≤-max n (suc m) = leq-max-1 (suc n) (suc m) (max (suc n) (suc m)) ≤-refl
-
-    -- suc n ≤ 0 is impossible (suc n ≤ 0 → suc n ≡ 0, contradiction)
-    suc-not-≤-zero : {n : ℕ} → suc n ≤ 0 → ⊥
-    suc-not-≤-zero {n} sn≤0 = snotz (≤0→≡0 sn≤0)
-
-    -- max (suc n) m ≥ 1, so it cannot equal 0
-    max-suc-neq-zero : max (suc (degree A)) (max (δ Π₁) (δ Π₂)) ≡ 0 → ⊥
-    max-suc-neq-zero eq = suc-not-≤-zero (subst (λ x → suc (degree A) ≤ x) eq (suc-≤-max (degree A) (max (δ Π₁) (δ Π₂))))
-
-SubformulaProperty (W⊢ {Γ} {Δ} {A} {s} Π) cf pf pfIn =
-  seq-sub-mono-Γ-r {Γ} {[ A ^ s ]} {Δ} {pf} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (⊢W {Γ} {Δ} {A} {s} Π) cf pf pfIn =
-  seq-sub-mono-Δ-l {Γ} {Δ} {[ A ^ s ]} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (C⊢ {Γ} {A} {s} {Δ} Π) cf pf pfIn =
-  seq-sub-contract-Γ {Γ} {Δ} {A ^ s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (⊢C {Γ} {A} {s} {Δ} Π) cf pf pfIn =
-  seq-sub-contract-Δ {Γ} {Δ} {A ^ s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (Exc⊢ {Γ₁} {A} {s} {B} {t} {Γ₂} {Δ} Π) cf pf pfIn =
-  seq-sub-exchange-Γ {Γ₁} {Γ₂} {Δ} {A ^ s} {B ^ t} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (⊢Exc {Γ} {Δ₁} {A} {s} {B} {t} {Δ₂} Π) cf pf pfIn =
-  seq-sub-exchange-Δ {Γ} {Δ₁} {Δ₂} {A ^ s} {B ^ t} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (¬⊢ {Γ} {A} {s} {Δ} Π) cf pf pfIn =
-  seq-sub-¬⊢ {Γ} {Δ} {A} {s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (⊢¬ {Γ} {A} {s} {Δ} Π) cf pf pfIn =
-  seq-sub-⊢¬ {Γ} {Δ} {A} {s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (∧₁⊢ {Γ} {A} {s} {Δ} {B} Π) cf pf pfIn =
-  seq-sub-∧₁⊢ {Γ} {Δ} {A} {B} {s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (∧₂⊢ {Γ} {B} {s} {Δ} {A} Π) cf pf pfIn =
-  seq-sub-∧₂⊢ {Γ} {Δ} {A} {B} {s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (⊢∧ {Γ₁} {A} {s} {Δ₁} {Γ₂} {B} {Δ₂} Π₁ Π₂) cf pf pfIn =
-  seq-sub-⊢∧ {Γ₁} {Γ₂} {Δ₁} {Δ₂} {A} {B} {s} (helper pfIn)
-  where
-    -- Extract cut-freeness for subproofs
-    cf₁ : isCutFree Π₁
-    cf₁ = ≤0→≡0 (subst (δ Π₁ ≤_) cf (left-≤-max {m = δ Π₁} {n = δ Π₂}))
-    cf₂ : isCutFree Π₂
-    cf₂ = ≤0→≡0 (subst (δ Π₂ ≤_) cf (right-≤-max {n = δ Π₂} {m = δ Π₁}))
-    helper : pf ∈ formulasInProof Π₁ ++ formulasInProof Π₂
-           → (pf ∈ sequentSubformulas Γ₁ ([ A ^ s ] ++ Δ₁)) ⊎ (pf ∈ sequentSubformulas Γ₂ ([ B ^ s ] ++ Δ₂))
-    helper pfIn' with mem-++-split {xs = formulasInProof Π₁} pfIn'
-    ... | inl pfIn₁ = inl (SubformulaProperty Π₁ cf₁ pf pfIn₁)
-    ... | inr pfIn₂ = inr (SubformulaProperty Π₂ cf₂ pf pfIn₂)
-SubformulaProperty (∨⊢ {Γ₁} {A} {s} {Δ₁} {Γ₂} {B} {Δ₂} Π₁ Π₂) cf pf pfIn =
-  subst (λ ctx → pf ∈ sequentSubformulas ctx (Δ₁ ++ Δ₂))
-        (++-assoc Γ₁ Γ₂ [ (A or' B) ^ s ])
-        (seq-sub-∨⊢ {Γ₁} {Γ₂} {Δ₁} {Δ₂} {A} {B} {s} (helper pfIn))
-  where
-    cf₁ : isCutFree Π₁
-    cf₁ = ≤0→≡0 (subst (δ Π₁ ≤_) cf (left-≤-max {m = δ Π₁} {n = δ Π₂}))
-    cf₂ : isCutFree Π₂
-    cf₂ = ≤0→≡0 (subst (δ Π₂ ≤_) cf (right-≤-max {n = δ Π₂} {m = δ Π₁}))
-    helper : pf ∈ formulasInProof Π₁ ++ formulasInProof Π₂
-           → (pf ∈ sequentSubformulas (Γ₁ ++ [ A ^ s ]) Δ₁) ⊎ (pf ∈ sequentSubformulas (Γ₂ ++ [ B ^ s ]) Δ₂)
-    helper pfIn' with mem-++-split {xs = formulasInProof Π₁} pfIn'
-    ... | inl pfIn₁ = inl (SubformulaProperty Π₁ cf₁ pf pfIn₁)
-    ... | inr pfIn₂ = inr (SubformulaProperty Π₂ cf₂ pf pfIn₂)
-SubformulaProperty (⊢∨₁ {Γ} {A} {s} {Δ} {B} Π) cf pf pfIn =
-  seq-sub-⊢∨₁ {Γ} {Δ} {A} {B} {s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (⊢∨₂ {Γ} {B} {s} {Δ} {A} Π) cf pf pfIn =
-  seq-sub-⊢∨₂ {Γ} {Δ} {A} {B} {s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (⇒⊢ {Γ₁} {B} {s} {Δ₁} {Γ₂} {A} {Δ₂} Π₁ Π₂) cf pf pfIn =
-  subst (λ ctx → pf ∈ sequentSubformulas ctx (Δ₁ ++ Δ₂))
-        (++-assoc Γ₁ Γ₂ [ (A ⇒ B) ^ s ])
-        (seq-sub-⇒⊢ {Γ₁} {Γ₂} {Δ₁} {Δ₂} {A} {B} {s} (helper pfIn))
-  where
-    cf₁ : isCutFree Π₁
-    cf₁ = ≤0→≡0 (subst (δ Π₁ ≤_) cf (left-≤-max {m = δ Π₁} {n = δ Π₂}))
-    cf₂ : isCutFree Π₂
-    cf₂ = ≤0→≡0 (subst (δ Π₂ ≤_) cf (right-≤-max {n = δ Π₂} {m = δ Π₁}))
-    helper : pf ∈ formulasInProof Π₁ ++ formulasInProof Π₂
-           → (pf ∈ sequentSubformulas (Γ₁ ++ [ B ^ s ]) Δ₁) ⊎ (pf ∈ sequentSubformulas Γ₂ ([ A ^ s ] ++ Δ₂))
-    helper pfIn' with mem-++-split {xs = formulasInProof Π₁} pfIn'
-    ... | inl pfIn₁ = inl (SubformulaProperty Π₁ cf₁ pf pfIn₁)
-    ... | inr pfIn₂ = inr (SubformulaProperty Π₂ cf₂ pf pfIn₂)
-SubformulaProperty (⊢⇒ {Γ} {A} {s} {B} {Δ} Π) cf pf pfIn =
-  seq-sub-⊢⇒ {Γ} {Δ} {A} {B} {s} (SubformulaProperty Π cf pf pfIn)
-SubformulaProperty (□⊢ Π) cf pf pfIn =
-  ⊥-rec (∈-[]→⊥ (subst (pf ∈_) (formulasInProof-cutfree Π cf) pfIn))
-SubformulaProperty (⊢□ _ _ _ Π) cf pf pfIn =
-  ⊥-rec (∈-[]→⊥ (subst (pf ∈_) (formulasInProof-cutfree Π cf) pfIn))
-SubformulaProperty (♢⊢ _ _ _ Π) cf pf pfIn =
-  ⊥-rec (∈-[]→⊥ (subst (pf ∈_) (formulasInProof-cutfree Π cf) pfIn))
-SubformulaProperty (⊢♢ Π) cf pf pfIn =
-  ⊥-rec (∈-[]→⊥ (subst (pf ∈_) (formulasInProof-cutfree Π cf) pfIn))
-
--- =============================================================================
--- Faithful Subformula Property using the relation
--- =============================================================================
-
--- Helper: every formula is a subformula of itself
 refl-subformula : (pf : PFormula) → pf isSubformulaOf pf
 refl-subformula (A ^ s) = refl-sub
 
@@ -982,7 +872,7 @@ mem-gives-seq-sub {pf} {Γ} {Δ} pfIn with mem-++-split {xs = Γ} pfIn
 ... | inr pfInΔ = mem-gives-seq-sub-r pfInΔ
 
 -- =============================================================================
--- Structural Rule Helpers for SubformulaProperty'
+-- Structural Rule Helpers for SubformulaProperty
 -- =============================================================================
 
 -- Weakening left: premise Γ ⊢ Δ, conclusion Γ ++ [A^s] ⊢ Δ
@@ -1066,7 +956,7 @@ seq-sub'-⊢Exc {pf} {Γ} {Δ₁} {Δ₂} {A} {B} {s} {t} (inr (qf , qfIn , sub)
     ...     | inr (there ())
 
 -- =============================================================================
--- Propositional Rule Helpers for SubformulaProperty'
+-- Propositional Rule Helpers for SubformulaProperty
 -- =============================================================================
 
 -- Helper: subformula relation is transitive-like for negation
@@ -1176,7 +1066,7 @@ sub'-⊢⇒ (inr (qf , qfIn , sub)) with mem-++-split {xs = [ _ ]} qfIn
 ... | inl here = inr ((_ ⇒ _) ^ _ , here , ⇒₂-sub sub)
 
 -- =============================================================================
--- Modal Rule Helpers for SubformulaProperty'
+-- Modal Rule Helpers for SubformulaProperty
 -- =============================================================================
 
 -- For S4.2, the subformula relation uses ⊑ (subset) to match the system's modal rules.
@@ -1234,100 +1124,100 @@ sub'-⊢♢ {pf} {Γ} {Δ} {A} {s} {t} ext (inr (qf , qfIn , sub)) with mem-++-s
 -- The subformula relation uses ⊑ (subset) for modal formulas, matching
 -- the S4.2 system's modal rules.
 
-SubformulaProperty' : {Γ Δ : Ctx} → (Π : Γ ⊢ Δ) → isCutFree Π
+SubformulaProperty : {Γ Δ : Ctx} → (Π : Γ ⊢ Δ) → isCutFree Π
                     → (pf : PFormula) → pf ∈ allFormulasInProof Π
                     → isSubformulaOfSeq pf Γ Δ
-SubformulaProperty' {Γ} {Δ} Ax cf pf pfIn = mem-gives-seq-sub pfIn
-SubformulaProperty' (Cut Π₁ Π₂) cf pf pfIn = ⊥-rec (snotz (≤0→≡0 helper))
+SubformulaProperty {Γ} {Δ} Ax cf pf pfIn = mem-gives-seq-sub pfIn
+SubformulaProperty (Cut Π₁ Π₂) cf pf pfIn = ⊥-rec (snotz (≤0→≡0 helper))
   where
     helper : suc (degree _) ≤ 0
     helper = subst (suc (degree _) ≤_) cf (left-≤-max {m = suc (degree _)} {n = max (δ Π₁) (δ Π₂)})
-SubformulaProperty' (W⊢ {Γ} {Δ} {A} {s} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ A ^ s ]) ++ Δ} pfIn
+SubformulaProperty (W⊢ {Γ} {Δ} {A} {s} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ A ^ s ]) ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc  -- conclusion already has weakened context
-... | inr pfInSub = seq-sub'-W⊢ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (⊢W {Γ} {Δ} {A} {s} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ A ^ s ] ++ Δ)} pfIn
+... | inr pfInSub = seq-sub'-W⊢ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (⊢W {Γ} {Δ} {A} {s} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ A ^ s ] ++ Δ)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc  -- conclusion already has weakened context
-... | inr pfInSub = seq-sub'-⊢W (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (C⊢ {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ A ^ s ]) ++ Δ} pfIn
+... | inr pfInSub = seq-sub'-⊢W (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (C⊢ {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ A ^ s ]) ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = seq-sub'-C⊢ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (⊢C {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ A ^ s ] ++ Δ)} pfIn
+... | inr pfInSub = seq-sub'-C⊢ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (⊢C {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ A ^ s ] ++ Δ)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = seq-sub'-⊢C (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (Exc⊢ {Γ₁} {A} {s} {B} {t} {Γ₂} {Δ} Π) cf pf pfIn
+... | inr pfInSub = seq-sub'-⊢C (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (Exc⊢ {Γ₁} {A} {s} {B} {t} {Γ₂} {Δ} Π) cf pf pfIn
   with mem-++-split {xs = (((Γ₁ ++ [ B ^ t ]) ++ [ A ^ s ]) ++ Γ₂) ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = seq-sub'-Exc⊢ {Γ₁ = Γ₁} {Γ₂ = Γ₂} {Δ = Δ} {A = A} {B = B} {s = s} {t = t} (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (⊢Exc {Γ} {Δ₁} {A} {s} {B} {t} {Δ₂} Π) cf pf pfIn
+... | inr pfInSub = seq-sub'-Exc⊢ {Γ₁ = Γ₁} {Γ₂ = Γ₂} {Δ = Δ} {A = A} {B = B} {s = s} {t = t} (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (⊢Exc {Γ} {Δ₁} {A} {s} {B} {t} {Δ₂} Π) cf pf pfIn
   with mem-++-split {xs = Γ ++ (((Δ₁ ++ [ B ^ t ]) ++ [ A ^ s ]) ++ Δ₂)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = seq-sub'-⊢Exc {Γ = Γ} {Δ₁ = Δ₁} {Δ₂ = Δ₂} {A = A} {B = B} {s = s} {t = t} (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (¬⊢ {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ (¬ A) ^ s ]) ++ Δ} pfIn
+... | inr pfInSub = seq-sub'-⊢Exc {Γ = Γ} {Δ₁ = Δ₁} {Δ₂ = Δ₂} {A = A} {B = B} {s = s} {t = t} (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (¬⊢ {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ (¬ A) ^ s ]) ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-¬⊢ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (⊢¬ {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (¬ A) ^ s ] ++ Δ)} pfIn
+... | inr pfInSub = sub'-¬⊢ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (⊢¬ {Γ} {A} {s} {Δ} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (¬ A) ^ s ] ++ Δ)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-⊢¬ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (∧₁⊢ {Γ} {A} {s} {Δ} {B} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ (A and' B) ^ s ]) ++ Δ} pfIn
+... | inr pfInSub = sub'-⊢¬ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (∧₁⊢ {Γ} {A} {s} {Δ} {B} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ (A and' B) ^ s ]) ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-∧₁⊢ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (∧₂⊢ {Γ} {B} {s} {Δ} {A} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ (A and' B) ^ s ]) ++ Δ} pfIn
+... | inr pfInSub = sub'-∧₁⊢ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (∧₂⊢ {Γ} {B} {s} {Δ} {A} Π) cf pf pfIn with mem-++-split {xs = (Γ ++ [ (A and' B) ^ s ]) ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-∧₂⊢ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (⊢∧ {Γ₁} {A} {s} {Δ₁} {Γ₂} {B} {Δ₂} Π₁ Π₂) cf pf pfIn
+... | inr pfInSub = sub'-∧₂⊢ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (⊢∧ {Γ₁} {A} {s} {Δ₁} {Γ₂} {B} {Δ₂} Π₁ Π₂) cf pf pfIn
   with mem-++-split {xs = (Γ₁ ++ Γ₂) ++ ([ (A and' B) ^ s ] ++ Δ₁ ++ Δ₂)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
 ... | inr pfInSub with mem-++-split {xs = allFormulasInProof Π₁} pfInSub
-...   | inl pfIn₁ = sub'-⊢∧ (inl (SubformulaProperty' Π₁ cf₁ pf pfIn₁))
+...   | inl pfIn₁ = sub'-⊢∧ (inl (SubformulaProperty Π₁ cf₁ pf pfIn₁))
         where cf₁ = ≤0→≡0 (subst (δ Π₁ ≤_) cf (left-≤-max {m = δ Π₁}))
-...   | inr pfIn₂ = sub'-⊢∧ {Γ₁ = Γ₁} (inr (SubformulaProperty' Π₂ cf₂ pf pfIn₂))
+...   | inr pfIn₂ = sub'-⊢∧ {Γ₁ = Γ₁} (inr (SubformulaProperty Π₂ cf₂ pf pfIn₂))
         where cf₂ = ≤0→≡0 (leq-max-2 (δ Π₁) (δ Π₂) 0 (subst (_≤ 0) (sym cf) ≤-refl))
-SubformulaProperty' (∨⊢ {Γ₁} {A} {s} {Δ₁} {Γ₂} {B} {Δ₂} Π₁ Π₂) cf pf pfIn
+SubformulaProperty (∨⊢ {Γ₁} {A} {s} {Δ₁} {Γ₂} {B} {Δ₂} Π₁ Π₂) cf pf pfIn
   with mem-++-split {xs = (Γ₁ ++ (Γ₂ ++ [ (A or' B) ^ s ])) ++ (Δ₁ ++ Δ₂)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
 ... | inr pfInSub with mem-++-split {xs = allFormulasInProof Π₁} pfInSub
-...   | inl pfIn₁ = sub'-∨⊢ (inl (SubformulaProperty' Π₁ cf₁ pf pfIn₁))
+...   | inl pfIn₁ = sub'-∨⊢ (inl (SubformulaProperty Π₁ cf₁ pf pfIn₁))
         where cf₁ = ≤0→≡0 (subst (δ Π₁ ≤_) cf (left-≤-max {m = δ Π₁}))
-...   | inr pfIn₂ = sub'-∨⊢ {Γ₁ = Γ₁} (inr (SubformulaProperty' Π₂ cf₂ pf pfIn₂))
+...   | inr pfIn₂ = sub'-∨⊢ {Γ₁ = Γ₁} (inr (SubformulaProperty Π₂ cf₂ pf pfIn₂))
         where cf₂ = ≤0→≡0 (leq-max-2 (δ Π₁) (δ Π₂) 0 (subst (_≤ 0) (sym cf) ≤-refl))
-SubformulaProperty' (⊢∨₁ {Γ} {A} {s} {Δ} {B} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (A or' B) ^ s ] ++ Δ)} pfIn
+SubformulaProperty (⊢∨₁ {Γ} {A} {s} {Δ} {B} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (A or' B) ^ s ] ++ Δ)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-⊢∨₁ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (⊢∨₂ {Γ} {B} {s} {Δ} {A} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (A or' B) ^ s ] ++ Δ)} pfIn
+... | inr pfInSub = sub'-⊢∨₁ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (⊢∨₂ {Γ} {B} {s} {Δ} {A} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (A or' B) ^ s ] ++ Δ)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-⊢∨₂ (SubformulaProperty' Π cf pf pfInSub)
-SubformulaProperty' (⇒⊢ {Γ₁} {B} {s} {Δ₁} {Γ₂} {A} {Δ₂} Π₁ Π₂) cf pf pfIn
+... | inr pfInSub = sub'-⊢∨₂ (SubformulaProperty Π cf pf pfInSub)
+SubformulaProperty (⇒⊢ {Γ₁} {B} {s} {Δ₁} {Γ₂} {A} {Δ₂} Π₁ Π₂) cf pf pfIn
   with mem-++-split {xs = (Γ₁ ++ (Γ₂ ++ [ (A ⇒ B) ^ s ])) ++ (Δ₁ ++ Δ₂)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
 ... | inr pfInSub with mem-++-split {xs = allFormulasInProof Π₁} pfInSub
-...   | inl pfIn₁ = sub'-⇒⊢ (inl (SubformulaProperty' Π₁ cf₁ pf pfIn₁))
+...   | inl pfIn₁ = sub'-⇒⊢ (inl (SubformulaProperty Π₁ cf₁ pf pfIn₁))
         where cf₁ = ≤0→≡0 (subst (δ Π₁ ≤_) cf (left-≤-max {m = δ Π₁}))
-...   | inr pfIn₂ = sub'-⇒⊢ {Γ₁ = Γ₁} (inr (SubformulaProperty' Π₂ cf₂ pf pfIn₂))
+...   | inr pfIn₂ = sub'-⇒⊢ {Γ₁ = Γ₁} (inr (SubformulaProperty Π₂ cf₂ pf pfIn₂))
         where cf₂ = ≤0→≡0 (leq-max-2 (δ Π₁) (δ Π₂) 0 (subst (_≤ 0) (sym cf) ≤-refl))
-SubformulaProperty' (⊢⇒ {Γ} {A} {s} {B} {Δ} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (A ⇒ B) ^ s ] ++ Δ)} pfIn
+SubformulaProperty (⊢⇒ {Γ} {A} {s} {B} {Δ} Π) cf pf pfIn with mem-++-split {xs = Γ ++ ([ (A ⇒ B) ^ s ] ++ Δ)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-⊢⇒ (SubformulaProperty' Π cf pf pfInSub)
+... | inr pfInSub = sub'-⊢⇒ (SubformulaProperty Π cf pf pfInSub)
 -- Modal rules: □⊢ and ⊢♢ use merge (s ∘ t), so s ⊑ (s ∘ t) by ⊑-merge-l
 -- ⊢□ and ♢⊢ use insertToken x s, and IsSingleTokenExt provides s ⊑ t
-SubformulaProperty' (□⊢ {Γ = Γ} {A = A} {s = s} {t = t} {Δ = Δ} Π) cf pf pfIn
+SubformulaProperty (□⊢ {Γ = Γ} {A = A} {s = s} {t = t} {Δ = Δ} Π) cf pf pfIn
   with mem-++-split {xs = (Γ ++ [ (□ A) ^ s ]) ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-□⊢ (⊑-merge-l s t) (SubformulaProperty' Π cf pf pfInSub)
+... | inr pfInSub = sub'-□⊢ (⊑-merge-l s t) (SubformulaProperty Π cf pf pfInSub)
 -- ⊢□: uses insertToken x s, we derive s ⊑ (insertToken x s) via ⊑-insertToken-base
-SubformulaProperty' {Γ} {Δ'} (⊢□ {x} {s} _ _ _ Π) cf pf pfIn
+SubformulaProperty {Γ} {Δ'} (⊢□ {x} {s} _ _ _ Π) cf pf pfIn
   with mem-++-split {xs = Γ ++ Δ'} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-⊢□ (⊑-insertToken-base s x) (SubformulaProperty' Π cf pf pfInSub)
+... | inr pfInSub = sub'-⊢□ (⊑-insertToken-base s x) (SubformulaProperty Π cf pf pfInSub)
 -- ♢⊢: uses insertToken x s, we derive s ⊑ (insertToken x s) via ⊑-insertToken-base
-SubformulaProperty' {Γ'} {Δ} (♢⊢ {x} {s} _ _ _ Π) cf pf pfIn
+SubformulaProperty {Γ'} {Δ} (♢⊢ {x} {s} _ _ _ Π) cf pf pfIn
   with mem-++-split {xs = Γ' ++ Δ} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-♢⊢ (⊑-insertToken-base s x) (SubformulaProperty' Π cf pf pfInSub)
+... | inr pfInSub = sub'-♢⊢ (⊑-insertToken-base s x) (SubformulaProperty Π cf pf pfInSub)
 -- ⊢♢: uses merge (s ∘ t), so s ⊑ (s ∘ t) by ⊑-merge-l
-SubformulaProperty' (⊢♢ {Γ = Γ} {A = A} {s = s} {t = t} {Δ = Δ} Π) cf pf pfIn
+SubformulaProperty (⊢♢ {Γ = Γ} {A = A} {s = s} {t = t} {Δ = Δ} Π) cf pf pfIn
   with mem-++-split {xs = Γ ++ ([ (♢ A) ^ s ] ++ Δ)} pfIn
 ... | inl pfInConc = mem-gives-seq-sub pfInConc
-... | inr pfInSub = sub'-⊢♢ (⊑-merge-l s t) (SubformulaProperty' Π cf pf pfInSub)
+... | inr pfInSub = sub'-⊢♢ (⊑-merge-l s t) (SubformulaProperty Π cf pf pfInSub)
 
 -- =============================================================================
 -- Corollary: Combined with Cut Elimination

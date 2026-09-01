@@ -1251,7 +1251,7 @@ the whole module elaborates in under a second.}
 
 The Cut-Elimination Theorem does not, by itself, constrain the shape of the formulae occurring in a derivation: what it produces is a cut-free derivation, and it is on cut-free derivations that such a constraint can be established. We therefore state the Subformula Property for cut-free proofs, and then read off analyticity by composing it with Theorem~\ref{thm:cut-elim}.
 
-\begin{theorem}[Subformula Property \agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty\%27}]\label{cor:subformula}
+\begin{theorem}[Subformula Property \agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty}]\label{cor:subformula}
 Any formula occurring in a cut-free proof $\Pi$ of $\seq{\Gamma}{\Delta}$ is a subformula (in the sense of Definition~\ref{def:subform}) of some formula in the end-sequent $\seq{\Gamma}{\Delta}$.
 \end{theorem}
 
@@ -1260,7 +1260,7 @@ If $\seq{\Gamma}{\Delta}$ is provable in $\eseq$, then it has a proof in which e
 \end{corollary}
 
 \begin{proof}
-By Theorem~\ref{thm:cut-elim} there is a cut-free proof $\Pi^{*}$ of $\seq{\Gamma}{\Delta}$, and Theorem~\ref{cor:subformula} applied to $\Pi^{*}$ gives the claim. In \agda{} this is literally the composition of \texttt{CutElimination}, which returns a proof together with a witness of \texttt{isCutFree}, with \texttt{SubformulaProperty'}, which consumes exactly such a pair.
+By Theorem~\ref{thm:cut-elim} there is a cut-free proof $\Pi^{*}$ of $\seq{\Gamma}{\Delta}$, and Theorem~\ref{cor:subformula} applied to $\Pi^{*}$ gives the claim. In \agda{} this is literally the composition of \texttt{CutElimination}, which returns a proof together with a witness of \texttt{isCutFree}, with \texttt{SubformulaProperty}, which consumes exactly such a pair.
 \end{proof}
 
 \noindent
@@ -1280,9 +1280,6 @@ We conclude the section by showing the \agda{} code of the Subformula Property, 
 
 \noindent
 The function is defined by induction on the derivation: the base case (\textsc{Ax}) is immediate; the Cut case is discharged by contradiction, since a proof with $\delta = 0$ cannot end in a Cut rule; for every other rule the property is propagated from the premises by the induction hypothesis. The two modal cases displayed show that the propagation is not uniform: $\Box\vdash$ and $\vdash\Diamond$ extend the principal position by a whole position, and the witness is \texttt{⊑-merge-l}, while the two eigenrules extend it by a single fresh token, and the witness is \texttt{⊑-insertToken-base}. The two witnesses instantiate the same subformula clause of Definition~\ref{def:subform} along two different position extensions.
-
-{\sloppy The development also contains a weaker variant, \texttt{SubformulaProperty}~\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#SubformulaProperty}, which differs in both the domain and the codomain: it quantifies over \texttt{formulasInProof}~\agdalink{S4dot2.CutElimination.SubformulaProperty.html\#formulasInProof} rather than over \texttt{allFormulasInProof}, and it concludes membership in the set of subformulae of the end-sequent rather than the subformula relation itself. Since \texttt{formulasInProof} collects only the cut formulae of a derivation, on cut-free proofs the variant is vacuously true: its hypotheses cannot be met, and its Ax clause is an absurdity pattern. We display the primed version precisely because it is the one with content.\par}
-
 
 \commento{%--- old Discussion subsection (superseded by Section~\ref{sec:finite-semantics})
 \subsection{Discussion: on the Semantics and the Metatheory for \texorpdfstring{$\calculus$}{E\_S4.2}}

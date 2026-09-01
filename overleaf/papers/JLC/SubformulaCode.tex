@@ -1,6 +1,6 @@
 %<*subformulaProperty>
 \begin{code}%
-\>[0]\AgdaFunction{SubformulaProperty'}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSpace{}\AgdaBound{Δ}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Ctx}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaSymbol{(}\AgdaBound{Π}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaBound{Γ}\AgdaSpace{}\AgdaDatatype{⊢}\AgdaSpace{}\AgdaBound{Δ}\AgdaSymbol{)}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\<%
+\>[0]\AgdaFunction{SubformulaProperty}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSpace{}\AgdaBound{Δ}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaDatatype{Ctx}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaSymbol{(}\AgdaBound{Π}\AgdaSpace{}\AgdaSymbol{:}\AgdaSpace{}\AgdaBound{Γ}\AgdaSpace{}\AgdaDatatype{⊢}\AgdaSpace{}\AgdaBound{Δ}\AgdaSymbol{)}\AgdaSpace{}\AgdaSymbol{→}\AgdaSpace{}\<%
 \\
 \>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{isCutFree}\AgdaSpace{}\AgdaBound{Π}\<%
 \\
@@ -10,13 +10,13 @@
 \\
 \>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaSymbol{→}\AgdaSpace{}\AgdaFunction{isSubformulaOfSeq}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaBound{Γ}\AgdaSpace{}\AgdaBound{Δ}\<%
 \\
-\>[0]\AgdaFunction{SubformulaProperty'}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaInductiveConstructor{Ax}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfIn}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\<%
+\>[0]\AgdaFunction{SubformulaProperty}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaInductiveConstructor{Ax}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfIn}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\<%
 \\
 \>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{mem-gives-seq-sub}\AgdaSpace{}\AgdaFunction{pfIn}\<%
 \\
-\>[0]\AgdaFunction{SubformulaProperty'}\AgdaSpace{}\AgdaSymbol{(}\AgdaInductiveConstructor{Cut}\AgdaSpace{}\AgdaBound{Π₁}\AgdaSpace{}\AgdaBound{Π₂}\AgdaSymbol{)}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfIn}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaFunction{⊥-rec}\AgdaSpace{}\AgdaSymbol{(}\<%
+\>[0]\AgdaFunction{SubformulaProperty}\AgdaSpace{}\AgdaSymbol{(}\AgdaInductiveConstructor{Cut}\AgdaSpace{}\AgdaBound{Π₁}\AgdaSpace{}\AgdaBound{Π₂}\AgdaSymbol{)}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfIn}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaFunction{⊥-rec}\AgdaSpace{}\AgdaSymbol{(}\AgdaFunction{snotz}\AgdaSpace{}\<%
 \\
-\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{snotz}\AgdaSpace{}\AgdaSymbol{(}\AgdaFunction{≤0→≡0}\AgdaSpace{}\AgdaFunction{helper}\AgdaSymbol{)}\AgdaSymbol{)}\<%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaSymbol{(}\AgdaFunction{≤0→≡0}\AgdaSpace{}\AgdaFunction{helper}\AgdaSymbol{)}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndentSpace{}\AgdaKeyword{where}\<%
 \\
@@ -34,9 +34,9 @@
 \\
 \>[0]\AgdaComment{-- ⊢□ and ♢⊢ use insertToken x s, and IsSingleTokenExt provides s ⊑ t}\<%
 \\
-\>[0]\AgdaFunction{SubformulaProperty'}\AgdaSpace{}\AgdaSymbol{(}\AgdaInductiveConstructor{□⊢}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{Γ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{A}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{A}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{s}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{s}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{t}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{t}\AgdaSymbol{\}}\AgdaSpace{}\<%
+\>[0]\AgdaFunction{SubformulaProperty}\AgdaSpace{}\AgdaSymbol{(}\AgdaInductiveConstructor{□⊢}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{Γ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{A}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{A}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{s}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{s}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{t}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{t}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\<%
 \\
-\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{Δ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaBound{Π}\AgdaSymbol{)}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfIn}\<%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaBound{Δ}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaBound{Δ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaBound{Π}\AgdaSymbol{)}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfIn}\<%
 \\
 \>[0]\AgdaIndentSpace{}\AgdaKeyword{with}\AgdaSpace{}\AgdaFunction{mem-++-split}\AgdaSpace{}\AgdaSymbol{\{}\AgdaFunction{xs}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaSymbol{(}\AgdaBound{Γ}\AgdaSpace{}\AgdaFunction{++}\AgdaSpace{}\AgdaFunction{[}\AgdaSpace{}\AgdaSymbol{(}\AgdaInductiveConstructor{□}\AgdaSpace{}\AgdaBound{A}\AgdaSymbol{)}\AgdaSpace{}\AgdaInductiveConstructor{\textasciicircum{}}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaFunction{]}\AgdaSymbol{)}\AgdaSpace{}\AgdaFunction{++}\AgdaSpace{}\AgdaBound{Δ}\AgdaSymbol{\}}\AgdaSpace{}\<%
 \\
@@ -46,11 +46,11 @@
 \\
 \>[0]\AgdaSymbol{...}\AgdaSpace{}\AgdaSymbol{|}\AgdaSpace{}\AgdaInductiveConstructor{inr}\AgdaSpace{}\AgdaFunction{pfInSub}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaFunction{sub'-□⊢}\AgdaSpace{}\AgdaSymbol{(}\AgdaFunction{⊑-merge-l}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaBound{t}\AgdaSymbol{)}\AgdaSpace{}\AgdaSymbol{(}\<%
 \\
-\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{SubformulaProperty'}\AgdaSpace{}\AgdaBound{Π}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfInSub}\AgdaSymbol{)}\<%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{SubformulaProperty}\AgdaSpace{}\AgdaBound{Π}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfInSub}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaComment{-- ⊢□: uses insertToken x s, we derive s ⊑ (insertToken x s) via ⊑-insertToken-base}\<%
 \\
-\>[0]\AgdaFunction{SubformulaProperty'}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaFunction{Δ'}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{(}\AgdaInductiveConstructor{⊢□}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{x}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{s}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\_}\AgdaSpace{}\AgdaSymbol{\_}\AgdaSpace{}\AgdaSymbol{\_}\AgdaSpace{}\AgdaBound{Π}\AgdaSymbol{)}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\<%
+\>[0]\AgdaFunction{SubformulaProperty}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaFunction{Δ'}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{(}\AgdaInductiveConstructor{⊢□}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{x}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\{}\AgdaBound{s}\AgdaSymbol{\}}\AgdaSpace{}\AgdaSymbol{\_}\AgdaSpace{}\AgdaSymbol{\_}\AgdaSpace{}\AgdaSymbol{\_}\AgdaSpace{}\AgdaBound{Π}\AgdaSymbol{)}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\<%
 \\
 \>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{pfIn}\<%
 \\
@@ -60,6 +60,6 @@
 \\
 \>[0]\AgdaSymbol{...}\AgdaSpace{}\AgdaSymbol{|}\AgdaSpace{}\AgdaInductiveConstructor{inr}\AgdaSpace{}\AgdaFunction{pfInSub}\AgdaSpace{}\AgdaSymbol{=}\AgdaSpace{}\AgdaFunction{sub'-⊢□}\AgdaSpace{}\AgdaSymbol{(}\AgdaFunction{⊑-insertToken-base}\AgdaSpace{}\AgdaBound{s}\AgdaSpace{}\AgdaBound{x}\AgdaSymbol{)}\AgdaSpace{}\AgdaSymbol{(}\<%
 \\
-\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{SubformulaProperty'}\AgdaSpace{}\AgdaBound{Π}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfInSub}\AgdaSymbol{)}\<%
+\>[0]\AgdaIndentSpace{}\AgdaIndentSpace{}\AgdaFunction{SubformulaProperty}\AgdaSpace{}\AgdaBound{Π}\AgdaSpace{}\AgdaBound{cf}\AgdaSpace{}\AgdaBound{pf}\AgdaSpace{}\AgdaFunction{pfInSub}\AgdaSymbol{)}\<%
 \end{code}
 %</subformulaProperty>
