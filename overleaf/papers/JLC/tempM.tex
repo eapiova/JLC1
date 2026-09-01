@@ -1222,7 +1222,7 @@ The correctness of the procedure rests on the invariant carried by the third arg
 
 \subsubsection{Running the procedure}\label{ssec:running}
 
-Since the development is constructive, the elimination procedure is not only a
+\spotlighty{Since the development is constructive, the elimination procedure is not only a
 theorem but a function, and it is fair to ask what the type checker can actually
 observe when it is applied. A small module of worked
 examples~\agdalink{S4dot2.CutElimination.Examples.html\#cutAxAx} records four
@@ -1237,15 +1237,15 @@ is rejected in under four seconds: the left-hand side is stuck on a transport
 introduced by the reassociation of the contexts, so the equality does not hold by
 definitional conversion. For a principal cut on a conjunction, which is the smallest
 principal pair after the negation, the question did not finish within thirty minutes
-under a heap bound of fourteen gigabytes.
+under a heap bound of fourteen gigabytes.}
 
-The dividing line follows the analysis of the principal case given above: the two
+\spotlighty{The dividing line follows the analysis of the principal case given above: the two
 applications that compute are the two in which the reduction traverses neither the
 cross mixes on the parent formula nor the transports that reassociate the contexts,
 while the two that do not compute are the two in which it traverses them. These are
 bounded observations about definitional conversion in the present formalisation, and
 we draw no conclusion from them about nontermination or about intrinsic lower bounds;
-the whole module elaborates in under a second.
+the whole module elaborates in under a second.}
 
 \subsubsection{The Subformula Property and the corollaries of Cut-Elimination}\label{ssec:corollaries}
 
