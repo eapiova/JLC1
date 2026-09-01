@@ -57,12 +57,17 @@ module Classical (inputs : ClassicalInputs) where
   -- Result: a *finite* S4.2 Kripke model with w₀ falsifying A.
   --
   -- Step 2 (strengthening to minimum): restrict to the upset
-  -- {w' : w' ≥ w₀}. This is a finite semilattice with minimum w₀,
-  -- giving a FiniteModel with eval M (m M) A ≡ false.
+  -- {w' : w' ≥ w₀}.  This yields a finite DIRECTED frame with minimum w₀,
+  -- which is NOT yet a join-semilattice: FiniteModel demands a genuine join
+  -- operation with its laws, and the passage from the filtrated frame to a
+  -- semilattice requires an argument this development does not give (one
+  -- reason the field below remains a parameter; see the paper, §4.2).
 
-  -- Harrop (1958), Lemma 4.1: FMP implies decidability.
-  -- "If P satisfies the finite model property then it is decidable."
-  -- Applies since S4.2 has FMP by segerberg-FMP above.
+  -- Harrop (1958): FMP implies decidability, CLASSICALLY, by interleaving an
+  -- enumeration of derivations with an enumeration of finite models by size.
+  -- The step is not formalised here: constructively a failed countermodel
+  -- search yields only ¬¬ derivability, so decidable-⊢S4dot2 is assumed as a
+  -- separate, independent parameter (see the paper, §4.2).
 
   -- =============================================================================
   -- Derived: FMP for S4.2
