@@ -112,6 +112,10 @@
 % Evidenziatore per la lettura interna: neutro nel build pulito, acceso in arancione
 % dal build del diff (make-jlc-diff.sh). Avvolgere i passaggi con \spotlight{...}.
 \newcommand{\spotlight}[1]{#1}
+% Evidenziatore giallo, stessa logica: neutro qui, acceso nel diff (lua-ul).
+\usepackage{luacolor}
+\usepackage{lua-ul}
+\newcommand{\spotlighty}[1]{#1}
 \newcommand{\agdalink}[1]{\href{\agdaBaseUrl/#1}{\raisebox{-0.1em}{\includegraphics[height=0.9em]{agda-bird}}}}
 
 
@@ -204,7 +208,7 @@ Despite this wide range of applications, with respect to other systems, $\logic$
 \item\label{item:interest-constructive} through the implementation, to understand the classical content of the proofs, possibly moving towards a purely constructive metatheory.
 \end{enumerate}
 
-A terminological remark, to fix how the two words are used in this paper. \emph{Intuitionistic} refers to the object logic: an intuitionistic modal logic is one whose underlying propositional logic is intuitionistic, as in the planned $\mathsf{I}\logic$ of Section~\ref{sec:conclusions_future}. \emph{Constructive} refers instead to the metatheory: the object logic studied here is classical $\logic$, and what we strive to keep constructive are the proofs \emph{about} it, that is, the formalised development. The two concerns are independent, and only the second is a theme of the present paper.
+\spotlighty{A terminological remark, to fix how the two words are used in this paper. \emph{Intuitionistic} refers to the object logic: an intuitionistic modal logic is one whose underlying propositional logic is intuitionistic, as in the planned $\mathsf{I}\logic$ of Section~\ref{sec:conclusions_future}. \emph{Constructive} refers instead to the metatheory: the object logic studied here is classical $\logic$, and what we strive to keep constructive are the proofs \emph{about} it, that is, the formalised development. The two concerns are independent, and only the second is a theme of the present paper.}
 
 \subsection{Our Contribution, from theory to implementation}
 In this present paper we take the first step on both counts (\ref{item:interest-prooftheory}) and (\ref{item:interest-constructive}) by focusing on the implementation and building on our previous investigation in natural deduction. We propose and implement a new deductive system for $\logic$ called $\eseq$ as a version of \emph{2-sequent}s. 2-sequents have been originally introduced and developed in~\cite{Masini1992:TwoSequentModalities, Masini1993:TwoSequentIntuitionism,MM:ONFineStr:95,MM:ComInt:95} where the authors showed how to characterize the negative $\bot$-free fragments of the modal logics $\axname{K}$, $\axname{T}$, $\axname{K4}$ and $\axname{S4}$, and for the corresponding Multiplicative Exponential Linear Logic (MELL) subsystems. The idea has been successively refined in~\cite{GMM:an-exp-ext-seq,GueMarMasPNGC2001} extending the approach to deal with the full MELL (and other linear systems) both in sequent calculi, and proof nets. More recently, they are further expanded in~\cite{Martini2023:CutElimination}, where an extensible system covering the classical modal logics in the $\axname{K}$, $\axname{D}$, $\axname{T}$, $\axname{K4}$, $\axname{D4}$ and $\axname{S4}$ spectrum is studied. We build in particular on this latter version of 2-sequents and on a natural deduction system counterpart introduced for $\logic$ in~\cite{Martini2024:S42NaturalDeduction}.
